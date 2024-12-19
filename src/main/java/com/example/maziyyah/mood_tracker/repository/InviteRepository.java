@@ -20,15 +20,15 @@ public class InviteRepository {
         // redis key for invite invite:{inviteToken}
         String inviteKey = "invite:" + inviteToken;
         String userId = (String) template.opsForHash().get(inviteKey, "userId");
-        String username = getUserIdDetails(userId);
-        return username;
+        String name = getUserIdDetails(userId);
+        return name;
     }
 
     public String getUserIdDetails(String userId) {
         String userKey = "user:" + userId;
-        String username = (String) template.opsForHash().get(userKey, "username");
+        String name = (String) template.opsForHash().get(userKey, "name");
 
-        return username;
+        return name;
         
     }
 

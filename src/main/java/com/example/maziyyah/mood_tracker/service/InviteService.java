@@ -14,7 +14,7 @@ public class InviteService {
     }
     
     public String getInviterUserDetails(String inviteToken) {
-        String username = inviteRepository.getInviterUserDetails(inviteToken);
-        return username;
+        String name = inviteRepository.getInviterUserDetails(inviteToken);
+        return name;
     }
 }

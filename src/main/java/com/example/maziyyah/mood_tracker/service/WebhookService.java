@@ -60,7 +60,9 @@ public class WebhookService {
     public Boolean handleLovedOneLinking(String inviteToken, long chatId) {
         Optional<Map<Object,Object>> inviteData = checkIfInviteTokenExists(inviteToken);
         if (inviteData.isPresent()) {
-            String lovedOneId = inviteData.get().get("lovedOneId").toString();
+            String lovedOneId = Optional.ofNullable(inviteData.get().get("lovedOneId"))
+                                        .map(Object::toString)
+                                        .orElseThrow(() -> new IllegalArgumentException("invite data does not exist"));
             String chatIdString = String.valueOf(chatId);
             webhookRepository.linkLovedOneIdToChatId(lovedOneId,chatIdString);
             webhookRepository.deleteInviteToken(inviteToken);

@@ -26,7 +26,7 @@ public class InviteController {
     @GetMapping("")
     public String showInviteInstructions(@RequestParam("token") String inviteToken, Model model) {
 
-        String username = inviteService.getInviterUserDetails(inviteToken);
+        String name = inviteService.getInviterUserDetails(inviteToken);
 
         // generate the link to Telegram with the inviteToken code pre-filled
         // String telegramBotUrl = telegramBotBaseUrl + "lovedone%3A" + inviteToken;
@@ -34,7 +34,7 @@ public class InviteController {
 
         System.out.println(telegramBotUrl);
         model.addAttribute("telegramBotUrl", telegramBotUrl);
-        model.addAttribute("invitedBy", username);
+        model.addAttribute("invitedBy", name);
         
         return "inviteInstructions";
     }

@@ -38,6 +38,7 @@ public class UserRepository {
         userHash.put("userId", user.getUserId());
         userHash.put("username", user.getUsername());
         userHash.put("password", passwordEncoder.encode(user.getPassword()));
+        userHash.put("name", user.getName());
         userHash.put("alertThreshold", String.valueOf(user.getAlertThreshold()));
         userHash.put("encouragementOptIn", String.valueOf(user.isEncouragementOptIn()));
 
