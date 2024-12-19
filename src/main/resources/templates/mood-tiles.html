@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tile Design</title>
+
+<style>
+  /* Main container for the tiles */
+  .tile-container {
+    display: flex; /* Horizontal layout for the tiles */
+    gap: 5px; /* Space between the tiles */
+  }
+
+  /* Each tile for a day */
+  .tile {
+    width: 50px; 
+    height: 50px; 
+    border-radius: 5px; 
+    display: flex; 
+    flex-direction: column; /* Stacks the mood colors vertically */
+    overflow: hidden; /* Prevents the inner mood-bars from overflowing */
+  }
+
+  /* Each mood bar inside a tile */
+  .mood-bar {
+    width: 100%; /* Full width of the tile */
+    height: 20%; /* Each mood takes up 20% of the tile's height */
+  }
+
+  /* Mood colors based on the user's scoring system */
+  .mood-2 { background-color: #006400; }  /* Dark Green */
+  .mood-1 { background-color: #32CD32; }  /* Light Green */
+  .mood-0 { background-color: #FFD700; }  /* Yellow */
+  .mood--1 { background-color: #FFA500; } /* Orange */
+  .mood--2 { background-color: #B22222; } /* Deep Red */
+</style>
+
+</head>
+<body>
+
+<h3>Mood Tracker - Tile View</h3>
+
+<!-- Container for the horizontal row of tiles -->
+<div class="tile-container" id="tile-container"></div>
+
+<script>
+  // Sample mood data (each day has multiple mood entries)
+  const moodData = [
+    { date: "2024-12-16", moods: [-2, -1, 0, 1, 2] }, 
+    { date: "2024-12-17", moods: [-2, -2, -1] }, 
+    { date: "2024-12-18", moods: [0, 0, 0] }, 
+    { date: "2024-12-19", moods: [2, 2, 2] }
+  ];
+
+  // Select the container where all tiles will be displayed
+  const container = document.getElementById('tile-container');
+
+  // Loop through each day's mood data to create a tile for it
+  moodData.forEach(day => {
+    // Create a "tile" to hold mood colors for a specific day
+    const tile = document.createElement('div');
+    tile.classList.add('tile'); // Add the tile CSS class
+
+    // Loop through each mood score for this day
+    day.moods.forEach(mood => {
+      const moodBar = document.createElement('div');
+      moodBar.classList.add('mood-bar', `mood-${mood}`); // Class will be 'mood-bar mood-2' etc.
+      tile.appendChild(moodBar); // Add the mood bar to the tile
+    });
+
+    // Add the completed tile to the container
+    container.appendChild(tile);
+  });
+</script>
+
+</body>
+</html>

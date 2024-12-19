@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Mood Tracker</title>
+
+    <!-- Add some basic CSS for styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #444;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        .steps {
+            text-align: left;
+            margin: 20px 0;
+        }
+        .step {
+            margin-bottom: 20px;
+        }
+        .step-number {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 18px;
+        }
+        .step-description {
+            margin-left: 10px;
+            display: inline-block;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .btn-telegram {
+            background-color: #0088cc;
+        }
+        .btn-telegram:hover {
+            background-color: #0077b6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>👋 Welcome to the Mood Tracker App!</h1>
+
+        <!-- Show the user who invited them -->
+        <p><span th:text="${invitedBy}"></span> has invited you to join them on the Mood Tracker app.</p>
+
+        <!-- Instructions for what to do next -->
+        <p>Follow the steps below to get started:</p>
+
+        <div class="steps">
+            <!-- Step 1 -->
+            <div class="step">
+                <span class="step-number">1️⃣</span>
+                <span class="step-description">
+                    Click the button below to **start the Telegram bot**.
+                </span>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step">
+                <span class="step-number">2️⃣</span>
+                <span class="step-description">
+                    When Telegram opens, click the **"Start"** button at the bottom of the chat.
+                </span>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step">
+                <span class="step-number">3️⃣</span>
+                <span class="step-description">
+                    Your telegram account will be linked, and you'll receive notifications from the Mood Tracker app.
+                </span>
+            </div>
+        </div>
+
+        <!-- Button to start the Telegram bot -->
+        <a th:href="${telegramBotUrl}" target="_blank" class="btn btn-telegram">
+            🚀 Start Telegram Bot
+        </a>
+
+        <!-- Optional button to return home -->
+        <a href="/" class="btn">🏠 Back to Home</a>
+    </div>
+
+</body>
+</html>
