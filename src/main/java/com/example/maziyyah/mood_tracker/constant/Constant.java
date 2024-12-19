@@ -12,5 +12,6 @@ public class Constant {
     public static final String USER_KEY_PREFIX = "user:";
     public static final String LOVED_ONE_KEY_PREFIX = "lovedOne:";
     public static final String INVITE_KEY_PREFIX = "invite:";
+    public static final String PROCESSED_UPDATE_KEY_PREFIX = "processed_updateID:";
     
 }

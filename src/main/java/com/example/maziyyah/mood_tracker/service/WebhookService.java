@@ -19,6 +19,14 @@ public class WebhookService {
         this.webhookRepository = webhookRepository;
     }
 
+    public Boolean isDuplicateUpdate(Integer updateId) {
+        return webhookRepository.isDuplicateUpdate(updateId);
+    }
+
+    public void markUpdateAsProcessed(Integer updateId) {
+        webhookRepository.markUpdateAsProcessed(updateId);
+    }
+
     public Optional<String> checkIfLinkingCodeExists(String linkingCode) {
         Object userIdObj = webhookRepository.checkIfLinkingCodeExist(linkingCode);
 
