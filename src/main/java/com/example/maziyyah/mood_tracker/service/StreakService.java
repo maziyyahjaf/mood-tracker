@@ -16,11 +16,13 @@ import jakarta.json.JsonReader;
 public class StreakService {
 
     private final StreakRepository streakRepository;
+    private final TelegramNotificationService telegramNotificationService;
+
 
     // StreakService should only focus on tracking, calculating, and maintaining mood streaks.
-    public StreakService( StreakRepository streakRepository) {
-       
+    public StreakService(StreakRepository streakRepository, TelegramNotificationService telegramNotificationService) {
         this.streakRepository = streakRepository;
+        this.telegramNotificationService = telegramNotificationService;
     }
 
     public void updateStreak(String userId, long epochDay) {
@@ -37,6 +39,7 @@ public class StreakService {
             // bad day: increment streak
             currentStreak += 1;
             // call the TelegramNotificationService -> encouragement
+            telegramNotificationService.sendEncouragementMessage(userId);
             System.out.println("Bad Day streak increase to: " + currentStreak);
         } else {
             // good day: reset streak
@@ -49,6 +52,7 @@ public class StreakService {
         Integer alertThreshold = getUserAlertThreshold(userId);
         if (currentStreak >= alertThreshold) {
             // call the TelegramNotificationService -> alert lovedones
+            telegramNotificationService.sendNotificationToLovedOnes(userId, currentStreak);
         }
     }
 

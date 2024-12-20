@@ -34,5 +34,12 @@ public class TelegramNotificationRepo {
         return template.opsForHash().get(lovedOneKey, Constant.LOVED_ONE_CHAT_ID_FIELD);
 
     }
+
+    public Object getUserName(String userId) {
+        String redisKey = Constant.USER_KEY_PREFIX + userId;
+        return template.opsForHash().get(redisKey, "name");
+    }
+
+
     
 }

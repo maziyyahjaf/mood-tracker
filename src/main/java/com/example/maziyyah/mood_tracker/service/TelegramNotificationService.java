@@ -1,7 +1,10 @@
 package com.example.maziyyah.mood_tracker.service;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +39,10 @@ public class TelegramNotificationService {
         this.telegramNotificationRepo = telegramNotificationRepo;
     }
 
-    
     // need the chatid of user
     // need the chatid of lovedones
 
-    public void sendMessage(String userId) {
+    public void sendEncouragementMessage(String userId) {
 
         Optional<String> userChatIdOpt = getUserChatId(userId);
         if (userChatIdOpt.isEmpty()) {
@@ -52,46 +54,125 @@ public class TelegramNotificationService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/json");
 
+        // dynamic messages -> either stored in redis or from API call
         String message = "Things will be okay";
 
         JsonObject jsonObject = Json.createObjectBuilder()
-                                .add("chat_id", userChatId)
-                                .add("text", message)
-                                .build();
+                .add("chat_id", userChatId)
+                .add("text", message)
+                .build();
 
-        RequestEntity<String> req = RequestEntity
-                                    .post(URI.create(buildSendMessageUrl()))
-                                    .headers(headers)
-                                    .body(jsonObject.toString());
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(req, String.class);
-            logger.info("Response: Status={}, Body={}", response.getStatusCode(), response.getBody());
-            System.out.println(response);
-        } catch (Exception e)    {
-            logger.error("Failed to send Telegram message to userId: {}. Error: {}", userId, e.getMessage(), e);
+        sendTelegramNotificationRequest(jsonObject);
+
+    }
+
+    public void sendNotificationToLovedOnes(String userId, int currentStreak) {
+        
+        Optional<List<String>> lovedOnesIdsOpt = getAllLovedOnes(userId);
+        if (lovedOnesIdsOpt.isEmpty()) {
+            logger.warn("Cannot send message because user {} has no loved ones linked.", userId);
+            return;
+        }
+
+        List<String> lovedOnesIds = lovedOnesIdsOpt.get();
+        for (String lovedOneId : lovedOnesIds) {
+            Optional<String> lovedOneIdChatIdOpt = getLovedOnesChatId(lovedOneId);
+            if (lovedOneIdChatIdOpt.isEmpty()) {
+                logger.info("Loved One with ID {} did not link their Telegram account", lovedOneId);
+                continue;
+            }
+            String lovedOneIdChatId = lovedOneIdChatIdOpt.get();
+            // get user details
+            String userName = getUserName(userId);
+            String message = userName + " has had a " + currentStreak + " tough days in a row. Send them some love ❤.";
+            sendTelegramNotification(lovedOneIdChatId, message);
 
         }
 
     }
 
+    public void sendTelegramNotification(String telegramChatId, String message) {
+
+        JsonObject jsonObject = Json.createObjectBuilder()
+                .add("chat_id", telegramChatId)
+                .add("text", message)
+                .build();
+        
+        sendTelegramNotificationRequest(jsonObject);
+    }
+
+    public void sendTelegramNotificationRequest(JsonObject jsonObject) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/json");
+
+        RequestEntity<String> req = RequestEntity
+                .post(URI.create(buildSendMessageUrl()))
+                .headers(headers)
+                .body(jsonObject.toString());
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(req, String.class);
+            logger.info("Response: Status={}, Body={}", response.getStatusCode(), response.getBody());
+            System.out.println(response);
+        } catch (Exception e) {
+            logger.error("Failed to send Telegram message. Error: {}", e.getMessage(), e);
+
+        }
+
+    }
 
     public String buildSendMessageUrl() {
         return UriComponentsBuilder.fromUriString(telegramBotMessageUrl)
-                                    .pathSegment("bot" + telegramBotToken)
-                                    .pathSegment("sendMessage")
-                                    .toUriString();
+                .pathSegment("bot" + telegramBotToken)
+                .pathSegment("sendMessage")
+                .toUriString();
     }
-    
+
     public Optional<String> getUserChatId(String userId) {
         return Optional.ofNullable(telegramNotificationRepo.getUserChatId(userId))
-                        .map(Object::toString)
-                        .map(chatId -> {
-                            logger.info("User with ID {} has a linked Telegram chat Id: {}", userId, chatId);
-                            return chatId;
-                        })
-                        .or(() -> {
-                            logger.info("User with ID {} did not link their Telegram account", userId);
-                            return Optional.empty();
-                        });
+                .map(Object::toString)
+                .map(chatId -> {
+                    logger.info("User with ID {} has a linked Telegram chat Id: {}", userId, chatId);
+                    return chatId;
+                })
+                .or(() -> {
+                    logger.info("User with ID {} did not link their Telegram account", userId);
+                    return Optional.empty();
+                });
+    }
+
+    public Optional<List<String>> getAllLovedOnes(String userId) {
+        Set<Object> retrievedData = telegramNotificationRepo.getAllLovedOnes(userId);
+
+        if (retrievedData == null || retrievedData.isEmpty()) {
+            logger.info("No linked loved ones");
+            return Optional.empty();
+            // maybe can send a message reminder to add a loved one?
+        }
+
+        List<String> lovedOneIds = retrievedData.stream()
+                .map(Object::toString) // convert each item to String
+                .collect(Collectors.toList());
+
+        return Optional.of(lovedOneIds);
+    }
+
+    public Optional<String> getLovedOnesChatId(String lovedOneId) {
+        return Optional.ofNullable(telegramNotificationRepo.getLovedOneChatId(lovedOneId))
+                .map(Object::toString)
+                .map(chatId -> {
+                    logger.info("Loved One with ID {} has a linked Telegram chat Id: {}", lovedOneId, chatId);
+                    return chatId;
+                })
+                .or(() -> {
+                    logger.info("Loved One with ID {} did not link their Telegram account", lovedOneId);
+                    return Optional.empty();
+                });
+    }
+
+    public String getUserName(String userId) {
+        return Optional.ofNullable(telegramNotificationRepo.getUserName(userId))
+                .map(Object::toString)
+                .orElse("Unknown User");
     }
 }
