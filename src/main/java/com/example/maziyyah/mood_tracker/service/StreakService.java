@@ -34,6 +34,7 @@ public class StreakService {
 
         double averageMoodScore = dailyMoodSummary.getAverageMoodScore();
         Integer currentStreak = getCurrentStreak(userId);
+        System.out.println("currentStreak :" + currentStreak);
 
         if (averageMoodScore < 0) {
             // bad day: increment streak

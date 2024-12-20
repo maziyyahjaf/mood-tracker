@@ -30,7 +30,7 @@ public class MoodTrackerRepository {
         String moodData = moodEntryJson.toString();
 
         template.opsForHash().put(redisKey, moodEntryId, moodData);
-
+    
     }
 
     // get all entries for a given day

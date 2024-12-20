@@ -50,8 +50,14 @@ public class MoodTrackerService {
         String moodEntryId = moodEntry.getMoodEntryId();
         JsonObject moodEntryJson = moodEntryToJson(moodEntry);
 
+        // **Save the new mood entry first!**
+        moodTrackerRepository.addMoodEntry(userId, epochDay, moodEntryId, moodEntryJson);
+    
         // update the summary log
+        // **Now fetch the updated mood entries for the day**
         List<MoodEntry> moodEntries = getMoodEntriesForDay(userId, epochDay);
+
+        // **Recalculate daily summary using the updated entries**
         double averageMoodScore = calculateAverageMoodScore(moodEntries);
         int numOfMoodEntries = moodEntries.size();
         String summaryMoodColor = calculateSummaryColor(averageMoodScore);
@@ -59,12 +65,13 @@ public class MoodTrackerService {
                 summaryMoodColor);
         JsonObject moodSummaryJson = dailyMoodSummaryToJson(dailyMoodSummary);
 
-        moodTrackerRepository.addMoodEntry(userId, epochDay, moodEntryId, moodEntryJson);
+        // **Update the daily summary log**
         moodTrackerRepository.updateDailySummaryLog(userId, epochDay, moodSummaryJson);
 
+        // **Record the last log day for the user**
+        moodTrackerRepository.recordLastLogDay(userId, epochDay);
+       
     }
-
-    
 
     public List<MoodEntryView> getMoodEntryViewsForDay(String userId, long epochDay) {
         List<MoodEntry> moodEntries = getMoodEntriesForDay(userId, epochDay);
