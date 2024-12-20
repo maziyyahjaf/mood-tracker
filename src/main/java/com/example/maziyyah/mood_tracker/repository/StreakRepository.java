@@ -24,7 +24,7 @@ public class StreakRepository {
 
     public void updateStreakCount(String userId, int currentStreak) {
         String redisKey = Constant.USER_KEY_PREFIX + userId;
-        template.opsForHash().put(redisKey, Constant.STREAK_FIELD, currentStreak);
+        template.opsForHash().put(redisKey, Constant.STREAK_FIELD, String.valueOf(currentStreak));
 
     }
 

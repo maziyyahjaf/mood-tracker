@@ -18,8 +18,8 @@ public class StreakService {
     private final StreakRepository streakRepository;
     private final TelegramNotificationService telegramNotificationService;
 
-
-    // StreakService should only focus on tracking, calculating, and maintaining mood streaks.
+    // StreakService should only focus on tracking, calculating, and maintaining
+    // mood streaks.
     public StreakService(StreakRepository streakRepository, TelegramNotificationService telegramNotificationService) {
         this.streakRepository = streakRepository;
         this.telegramNotificationService = telegramNotificationService;
@@ -29,8 +29,8 @@ public class StreakService {
 
         // get the DailyMoodSummary for the given day
         DailyMoodSummary dailyMoodSummary = getDailyMoodSummary(userId, epochDay)
-                                            .orElseThrow(() -> new IllegalStateException("No daily summary for user " + userId + " on epochDay " + epochDay));
-
+                .orElseThrow(() -> new IllegalStateException(
+                        "No daily summary for user " + userId + " on epochDay " + epochDay));
 
         double averageMoodScore = dailyMoodSummary.getAverageMoodScore();
         Integer currentStreak = getCurrentStreak(userId);
@@ -59,7 +59,7 @@ public class StreakService {
 
     public Optional<DailyMoodSummary> getDailyMoodSummary(String userId, long epochDay) {
         Object dailySummaryObject = streakRepository.getDailySummaryLog(userId, epochDay);
-     
+
         if (dailySummaryObject == null) {
             System.out.println("No daily summary found for user " + userId + " on epochDay " + epochDay);
             return Optional.empty(); // no data, so return an empty Optional
@@ -70,12 +70,13 @@ public class StreakService {
             DailyMoodSummary dailyMoodSummary = toDailyMoodSummary(jsonObject);
             return Optional.of(dailyMoodSummary);
         } catch (Exception e) {
-            System.err.println("Error parsing daily summary for user " + userId + " on epochDay " + epochDay +": " + e.getMessage());
+            System.err.println("Error parsing daily summary for user " + userId + " on epochDay " + epochDay + ": "
+                    + e.getMessage());
             e.printStackTrace();
         }
 
         return Optional.empty(); // return empty optional if parsing fails
-        
+
     }
 
     public DailyMoodSummary toDailyMoodSummary(JsonObject jsonObject) {
@@ -89,7 +90,6 @@ public class StreakService {
         return dailyMoodSummary;
     }
 
-    
     public Integer getCurrentStreak(String userId) {
         Object currentStreak = streakRepository.getCurrentStreak(userId);
 
@@ -101,11 +101,19 @@ public class StreakService {
     }
 
     public Integer getUserAlertThreshold(String userId) {
-        Integer alertThreshold = (Integer) streakRepository.getUserAlertThreshold(userId);
-        return alertThreshold;
+
+        // Assuming Redis returns a string value
+        Object alertThresholdObj = streakRepository.getUserAlertThreshold(userId);
+        if (alertThresholdObj instanceof Integer) {
+            return (Integer) alertThresholdObj;
+        } else if (alertThresholdObj != null) {
+            try {
+                return Integer.valueOf(alertThresholdObj.toString());
+            } catch (NumberFormatException e) {
+                System.err.println("Failed to convert alertThreshold to Integer: " + alertThresholdObj);
+            }
+        }
+        return 3; // Or provide a default value like 0
     }
-
-   
-
 
 }
