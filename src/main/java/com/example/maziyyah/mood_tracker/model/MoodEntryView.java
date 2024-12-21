@@ -9,6 +9,7 @@ public class MoodEntryView {
     private Integer moodScore;
     private String color;
     private String note;
+    public String emoji;
 
     public MoodEntryView() {
     }
@@ -54,6 +55,16 @@ public class MoodEntryView {
     public void setMoodEntryId(String moodEntryId) {
         this.moodEntryId = moodEntryId;
     }
+
+    public String getEmoji() {
+        return emoji;
+    }
+
+    public void setEmoji(String emoji) {
+        this.emoji = emoji;
+    }
+
+    
 
   
 

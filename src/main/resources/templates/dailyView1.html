@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily View</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+        <div class="container mt-4">
+
+        <h1>Your Moods for Today</h1>
+        <h2><span th:text="${#temporals.format(date, 'dd-MM-yyyy')}"></span></h2>
+
+        <ul>
+            <li><strong>Time</strong> — <strong>Mood</strong> — <strong>Note</strong></li>
+            <br>
+            <ul>
+                <!-- Loop through mood entries -->
+                <th:block th:each="entry : ${moodEntries}">
+                    <li>
+                        <span th:text="${#dates.format(entry.timestamp, 'HH:mm')}"></span> — 
+                        <span th:text="${entry.moodScore}"></span> — 
+                        <span th:text="${entry.note}"></span>
+                    </li>
+                </th:block>
+            </ul>
+        </ul>
+        
+        <a th:href="@{/moods}">Back to dashboard</a>
+        <a th:href="@{/moods/log}">Log another mood</a>
+
+
+        <!-- button to swtich to tile view for the same day -->
+         <a th:href="@{/moods/tileview/{epochDay}(epochDay=${epochDay})}" class="btn btn-primary">View Tile View</a>
+        
+    </div>
+    
+
+        
+</body>
+
+</html>

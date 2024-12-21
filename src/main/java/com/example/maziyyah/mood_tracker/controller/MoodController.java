@@ -74,8 +74,17 @@ public class MoodController {
         // get userId from session
         String userId = (String) session.getAttribute("userId");
 
+        if (userId == null) {
+            return "redirect:/login"; // Redirect if not logged in
+        }
+
         // get all the mood entries for the specified day
         List<MoodEntryView> moodEntries = moodTrackerService.getMoodEntryViewsForDay(userId, epochDay);
+        moodEntries.sort((e1, e2) -> e2.getTimestamp().compareTo(e1.getTimestamp()));
+
+        for (MoodEntryView entry : moodEntries) {
+            entry.setEmoji(MoodEmoji.getEmojiFor(entry.getMoodScore()));
+        }
 
         // convert epochDay to LocalDate
         LocalDate date = LocalDate.ofEpochDay(epochDay);
