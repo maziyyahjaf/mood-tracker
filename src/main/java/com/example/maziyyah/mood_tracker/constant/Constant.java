@@ -6,8 +6,10 @@ public class Constant {
     public static final String userChatIds = "userChatIds";
  
     public static final String LOVED_ONE_CHAT_ID_FIELD = "lovedOnesChatId";
-    public static final String STREAK_FIELD = "streak";
+    public static final String STREAK_COUNT_FIELD = "streak_count";
+    public static final String STREAK_START_DATE_FIELD = "streak_start_date";
     public static final String ALERT_FIELD = "alertThreshold";
+    public static final String ENCOURAGEMENT_OPT_IN_FIELD = "encouragementOptIn";
 
     public static final String USER_KEY_PREFIX = "user:";
     public static final String LOVED_ONE_KEY_PREFIX = "lovedOne:";

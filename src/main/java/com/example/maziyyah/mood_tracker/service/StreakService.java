@@ -26,7 +26,6 @@ public class StreakService {
     }
 
     public void updateStreak(String userId, long epochDay) {
-
         // get the DailyMoodSummary for the given day
         DailyMoodSummary dailyMoodSummary = getDailyMoodSummary(userId, epochDay)
                 .orElseThrow(() -> new IllegalStateException(
@@ -40,7 +39,10 @@ public class StreakService {
             // bad day: increment streak
             currentStreak += 1;
             // call the TelegramNotificationService -> encouragement
-            telegramNotificationService.sendEncouragementMessage(userId);
+            // check if encouragement opt in is true
+            if (encouragementOptIn(userId)) {
+                telegramNotificationService.sendEncouragementMessage(userId);
+            }
             System.out.println("Bad Day streak increase to: " + currentStreak);
         } else {
             // good day: reset streak
@@ -48,7 +50,7 @@ public class StreakService {
             System.out.println("Streak reset to: " + currentStreak);
         }
 
-        streakRepository.updateStreakCount(userId, currentStreak);
+        streakRepository.updateStreakCount(userId, currentStreak, epochDay);
 
         Integer alertThreshold = getUserAlertThreshold(userId);
         if (currentStreak >= alertThreshold) {
@@ -101,7 +103,6 @@ public class StreakService {
     }
 
     public Integer getUserAlertThreshold(String userId) {
-
         // Assuming Redis returns a string value
         Object alertThresholdObj = streakRepository.getUserAlertThreshold(userId);
         if (alertThresholdObj instanceof Integer) {
@@ -114,6 +115,17 @@ public class StreakService {
             }
         }
         return 3; // Or provide a default value like 0
+    }
+
+    public Boolean encouragementOptIn(String userId) {
+       
+        Object encouragementOptInObj = streakRepository.encouragementOptIn(userId);
+        // If the value is null, use the default value `true`
+        if (encouragementOptInObj == null) {
+            return true;
+        }
+        Boolean encouragementOptIn = Boolean.valueOf(encouragementOptInObj.toString());
+        return encouragementOptIn;
     }
 
 }

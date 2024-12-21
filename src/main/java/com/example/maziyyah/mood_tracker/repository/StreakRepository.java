@@ -19,13 +19,17 @@ public class StreakRepository {
 
     public Object getCurrentStreak(String userId) {
         String redisKey = Constant.USER_KEY_PREFIX + userId;
-        return template.opsForHash().get(redisKey, Constant.STREAK_FIELD);
+        return template.opsForHash().get(redisKey, Constant.STREAK_COUNT_FIELD);
     }
 
-    public void updateStreakCount(String userId, int currentStreak) {
+    public void updateStreakCount(String userId, int currentStreak, long streakStartDate) {
         String redisKey = Constant.USER_KEY_PREFIX + userId;
-        template.opsForHash().put(redisKey, Constant.STREAK_FIELD, String.valueOf(currentStreak));
+        template.opsForHash().put(redisKey, Constant.STREAK_COUNT_FIELD, String.valueOf(currentStreak));
 
+        // only update streak start date if this is a new streak
+        if (currentStreak == 1) {
+            template.opsForHash().put(redisKey, Constant.STREAK_START_DATE_FIELD, String.valueOf(streakStartDate));
+        }
     }
 
     public Object getUserAlertThreshold(String userId) {
@@ -34,15 +38,19 @@ public class StreakRepository {
         return template.opsForHash().get(redisKey, hashKey);
     }
 
-      // get daily summary
-      public Object getDailySummaryLog(String userId, long epochDay) {
-        String redisKey = "user:" + userId + ":summary";
+    // get daily summary
+    public Object getDailySummaryLog(String userId, long epochDay) {
+        String redisKey = Constant.USER_KEY_PREFIX + userId + ":summary";
         String hashKey = String.valueOf(epochDay);
         Object dailySummary = template.opsForHash().get(redisKey, hashKey);
-        
+
         return dailySummary;
     }
 
-    
-    
+    public Object encouragementOptIn(String userid) {
+        String redisKey = Constant.USER_KEY_PREFIX + userid;
+        String hashKey = Constant.ENCOURAGEMENT_OPT_IN_FIELD;
+        return template.opsForHash().get(redisKey, hashKey);
+    }
+
 }
