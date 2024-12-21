@@ -217,17 +217,17 @@ public class MoodTrackerService {
     private String getColorForMood(int moodScore) {
         switch (moodScore) {
             case 2:
-                return "#006400";
+                return "#4CAF50";
             case 1:
-                return "#90EE90";
+                return "#81C784";
             case 0:
-                return "#FFD700";
+                return "#FFCA28";
             case -1:
-                return "#FF4500";
+                return "#F4511E";
             case -2:
-                return "#8B0000";
+                return "#D32F2F";
             default:
-                return "#FFFFFF";
+                return "#E0E0E0";
         }
     }
 

@@ -1,11 +1,11 @@
 package com.example.maziyyah.mood_tracker.model;
 
 public enum MoodColor {
-    DARK_RED(-Double.MAX_VALUE, -2, "#8B0000"),
-    ORANGE_RED(-2, -1, "#FF4500"),
-    GOLDEN_YELLOW(-1, 0, "#FFD700"),
-    LIGHT_GREEN(0, 1, "#90EE90"),
-    DARK_GREEN(1, Double.MAX_VALUE, "#006400");
+    DARK_RED(-Double.MAX_VALUE, -2, "#D32F2F"),
+    ORANGE_RED(-2, -1, "#F4511E"),
+    GOLDEN_YELLOW(-1, 0, "#FFCA28"),
+    LIGHT_GREEN(0, 1, "#81C784"),
+    DARK_GREEN(1, Double.MAX_VALUE, "#4CAF50");
 
     private final double min;  // Lower bound for this mood range
     private final double max;  // Upper bound for this mood range
