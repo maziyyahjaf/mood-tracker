@@ -34,7 +34,10 @@ public class ExternalLLMService {
 
     public String generateMessage(String context, String userName) {
         String prompt = "Based on the following mood summary, create an encouraging message for " + userName + " :\n" + context;
-        return sendGeminiPrompt(prompt);
+        System.out.println("Generated Prompt: " + prompt);
+        String response = sendGeminiPrompt(prompt);
+        System.out.println("Gemini Response: " + response);
+        return response;
     }
 
     public String sendGeminiPrompt(String prompt) {

@@ -71,6 +71,7 @@ public class MoodController {
         // LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
         LocalDate currentDate = userTime.toLocalDate();
         long epochDay = currentDate.toEpochDay(); // number of days since 1970-01-01 (local time)
+        System.out.println("epochday" + epochDay);
 
         // hand null or empty tags
         // Convert tagsString to List<String>

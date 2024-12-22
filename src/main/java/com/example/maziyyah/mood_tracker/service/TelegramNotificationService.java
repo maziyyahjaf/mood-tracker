@@ -63,8 +63,11 @@ public class TelegramNotificationService {
             return;
         }
 
+        // Summarize mood insights
+        String summary = summarizeBadMoodEntries(badMoodEntries);
+
         // craft the dynamic messages -> either stored in redis or from API call
-        String dynamicMessage = craftEncouragementMessage(userId, userId);
+        String dynamicMessage = craftEncouragementMessage(summary, userId);
 
         // Prepare the Telegram API request
         String userChatId = userChatIdOpt.get();
@@ -197,11 +200,15 @@ public class TelegramNotificationService {
                     .append(" (Tags: ").append(String.join(", ", entry.getTags()))
                     .append(")\n");
         }
+        System.out.println("Generated Mood Summary: " + summary);
         return summary.toString();
     }
 
     public String craftEncouragementMessage(String summary, String userId) {
+        System.out.println("Received summary: " + summary);
+        System.out.println("Received userId: " + userId);
         String userName = getUserName(userId);
+        System.out.println("Resolved userName: " + userName);
         return externalLLMService.generateMessage(summary, userName);
 
     }

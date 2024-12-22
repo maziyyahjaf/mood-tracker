@@ -192,7 +192,7 @@ public class MoodInsightsService {
     }
 
     public List<MoodEntry> getBadMoodEntriesForDay(String userId, long epochDay) {
-        List<MoodEntry> entries = getBadMoodEntriesForDay(userId, epochDay);
+        List<MoodEntry> entries = getMoodEntriesForDay(userId, epochDay);
 
         // filter entries with bad mood scores
         List<MoodEntry> badMoodEntries = entries.stream()
