@@ -16,7 +16,7 @@ public class MoodInsights {
     private List<String> mostCommonMoodColors;
     private Map<Integer, Long> moodScoreDistribution; // Mood score distribution (eg {-2: 3, -1: 5, 0: 2})
     private Integer totalEntries; // Total number of mood entries
-    private Map<String, Integer> moodsByTimeOfDay; // Moods logged by time of day
+    private Map<String, Map<Mood, Integer>> moodsByTimeOfDay; // Moods logged by time of day
     
     // Add fields for future analytics (e.g., streaks, trends)
     // private Map<String, Integer> streaks;
@@ -57,10 +57,10 @@ public class MoodInsights {
     public void setTotalEntries(Integer totalEntries) {
         this.totalEntries = totalEntries;
     }
-    public Map<String, Integer> getMoodsByTimeOfDay() {
+    public Map<String, Map<Mood, Integer>> getMoodsByTimeOfDay() {
         return moodsByTimeOfDay;
     }
-    public void setMoodsByTimeOfDay(Map<String, Integer> moodsByTimeOfDay) {
+    public void setMoodsByTimeOfDay(Map<String, Map<Mood, Integer>> moodsByTimeOfDay) {
         this.moodsByTimeOfDay = moodsByTimeOfDay;
     }
     public long getEpochDay() {

@@ -1,13 +1,16 @@
 package com.example.maziyyah.mood_tracker.service;
 
+import java.io.StringReader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -16,6 +19,12 @@ import com.example.maziyyah.mood_tracker.model.Mood;
 import com.example.maziyyah.mood_tracker.model.MoodEntry;
 import com.example.maziyyah.mood_tracker.model.MoodInsights;
 import com.example.maziyyah.mood_tracker.repository.MoodInsightsRepo;
+
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 
 @Service
 public class MoodInsightsService {
@@ -54,11 +63,16 @@ public class MoodInsightsService {
         Integer numOfMoodEntriesForTheDay = totalEntries(entries);
         insights.setTotalEntries(numOfMoodEntriesForTheDay);
 
-        Map<String, Integer> moodsByTimeOfDay = getMoodsByTimeOfDay(userId, entries);
+        Map<String, Map<Mood, Integer>> moodsByTimeOfDay = getMoodsByTimeOfDay(userId, entries);
         insights.setMoodsByTimeOfDay(moodsByTimeOfDay);
 
         return insights;
 
+    }
+
+    public MoodInsights calculateDailyInsights(String userId, long epochDay) {
+        List<MoodEntry> entries = getMoodEntriesForDay(userId, epochDay);
+        return calculateDailyInsights(userId, epochDay, entries);
     }
 
     // Mood score distribution
@@ -111,12 +125,15 @@ public class MoodInsightsService {
         return entries.size();
     }
 
-    public Map<String, Integer> getMoodsByTimeOfDay(String userId, List<MoodEntry> entries) {
-        Map<String, Integer> timeBuckets = new HashMap<>();
+    public Map<String, Map<Mood, Integer>> getMoodsByTimeOfDay(String userId, List<MoodEntry> entries) {
+        // Outer map groups by time of day; inner map counts mood types
+        Map<String, Map<Mood, Integer>> moodsByTimeOfDay = new HashMap<>();
 
-        timeBuckets.put("Morning", 0);
-        timeBuckets.put("Afternoon", 0);
-        timeBuckets.put("Everning", 0);
+        // initialize time buckets with empty mood counts
+        moodsByTimeOfDay.put("Morning", new HashMap<>());
+        moodsByTimeOfDay.put("Afternoon", new HashMap<>());
+        moodsByTimeOfDay.put("Evening", new HashMap<>());
+        moodsByTimeOfDay.put("Late Night", new HashMap<>());
 
         String userTimeZone = getUserTimeZone(userId);
         ZoneId userZone = ZoneId.of(userTimeZone);
@@ -126,18 +143,28 @@ public class MoodInsightsService {
                     .atZone(ZoneId.of("UTC"))
                     .withZoneSameInstant(userZone);
             LocalTime time = zonedDateTime.toLocalTime();
+
+            String timeBucket;
             if (time.isBefore(LocalTime.NOON)) {
-                timeBuckets.put("Morning", timeBuckets.get("Morning") + 1);
+                timeBucket = "Morning";
             } else if (time.isBefore(LocalTime.of(18, 0))) {
-                timeBuckets.put("Afternoon", timeBuckets.get("Afternoon") + 1);
+                timeBucket = "Afternoon";
             } else if (time.isBefore(LocalTime.MIDNIGHT)) {
-                timeBuckets.put("Evening", timeBuckets.get("Evening") + 1);
+                timeBucket = "Evening";
             } else {
-                timeBuckets.put("Night", timeBuckets.get("Night") + 1);
+                timeBucket = "Late Night";
             }
+
+            // get the mood logged in the current entry
+            Mood mood = Mood.getMoodForScore(entry.getMoodScore());
+
+            // Update the inner map for the corresponding time bucket
+            moodsByTimeOfDay
+                    .computeIfAbsent(timeBucket, k -> new HashMap<>())
+                    .merge(mood, 1, Integer::sum);
         }
 
-        return timeBuckets;
+        return moodsByTimeOfDay;
 
     }
 
@@ -148,6 +175,48 @@ public class MoodInsightsService {
         }
         String timeZone = timeZoneObject.toString();
         return timeZone;
+    }
+
+    public List<MoodEntry> getMoodEntriesForDay(String userId, long epochDay) {
+        Map<Object, Object> entries = moodInsightsRepo.getMoodEntriesForDay(userId, epochDay);
+        List<MoodEntry> moodEntries = new ArrayList<>();
+
+        for (Entry<Object, Object> entry : entries.entrySet()) {
+            JsonReader jsonReader = Json.createReader(new StringReader(entry.getValue().toString()));
+            JsonObject jsonObject = jsonReader.readObject();
+            MoodEntry moodEntry = toMoodEntry(jsonObject);
+            moodEntries.add(moodEntry);
+        }
+
+        return moodEntries;
+    }
+
+    public List<MoodEntry> getBadMoodEntriesForDay(String userId, long epochDay) {
+        List<MoodEntry> entries = getBadMoodEntriesForDay(userId, epochDay);
+
+        // filter entries with bad mood scores
+        List<MoodEntry> badMoodEntries = entries.stream()
+                                                .filter(entry -> entry.getMoodScore() <= -1) 
+                                                .collect(Collectors.toList());
+        return badMoodEntries;
+    }
+
+    public MoodEntry toMoodEntry(JsonObject jsonObject) {
+        String moodEntryId = jsonObject.getString("moodEntryId");
+        Long timestamp = jsonObject.getJsonNumber("timestamp").longValue();
+        Long epochDay = jsonObject.getJsonNumber("epochDay").longValue();
+        Integer moodScore = jsonObject.getInt("moodScore");
+        String color = jsonObject.getString("color");
+        String note = jsonObject.getString("note");
+        JsonArray tagsJsonArray = jsonObject.getJsonArray("tags");
+
+        List<String> tags = new ArrayList<>();
+        for (JsonValue tag : tagsJsonArray) {
+            tags.add(tag.toString());
+        }
+        MoodEntry moodEntry = new MoodEntry(moodEntryId, timestamp, epochDay, moodScore, color, note, tags);
+
+        return moodEntry;
     }
 
 }

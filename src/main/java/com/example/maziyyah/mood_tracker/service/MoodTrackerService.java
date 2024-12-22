@@ -17,6 +17,7 @@ import com.example.maziyyah.mood_tracker.model.MoodColor;
 import com.example.maziyyah.mood_tracker.model.MoodEmoji;
 import com.example.maziyyah.mood_tracker.model.MoodEntry;
 import com.example.maziyyah.mood_tracker.model.MoodEntryView;
+import com.example.maziyyah.mood_tracker.model.MoodInsights;
 import com.example.maziyyah.mood_tracker.repository.MoodTrackerRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -141,6 +142,11 @@ public class MoodTrackerService {
 
         return Optional.empty(); // return empty optional if parsing fails
         
+    }
+
+    public MoodInsights getDailyInsights(String userId, long epochDay) {
+        List<MoodEntry> moodEntries = getMoodEntriesForDay(userId, epochDay);
+        return moodInsightsService.calculateDailyInsights(userId, epochDay, moodEntries);
     }
 
     public JsonObject moodEntryToJson(MoodEntry moodEntry) {

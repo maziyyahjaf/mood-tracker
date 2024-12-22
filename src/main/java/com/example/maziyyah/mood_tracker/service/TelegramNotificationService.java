@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.example.maziyyah.mood_tracker.model.MoodEntry;
 import com.example.maziyyah.mood_tracker.repository.TelegramNotificationRepo;
 
 import jakarta.json.Json;
@@ -33,16 +34,21 @@ public class TelegramNotificationService {
     RestTemplate restTemplate = new RestTemplate();
 
     private final TelegramNotificationRepo telegramNotificationRepo;
+    private final MoodInsightsService moodInsightsService;
+    private final ExternalLLMService externalLLMService;
     private static final Logger logger = LoggerFactory.getLogger(TelegramNotificationService.class);
 
-    public TelegramNotificationService(TelegramNotificationRepo telegramNotificationRepo) {
+    public TelegramNotificationService(TelegramNotificationRepo telegramNotificationRepo,
+            MoodInsightsService moodInsightsService, ExternalLLMService externalLLMService) {
         this.telegramNotificationRepo = telegramNotificationRepo;
+        this.moodInsightsService = moodInsightsService;
+        this.externalLLMService = externalLLMService;
     }
 
     // need the chatid of user
     // need the chatid of lovedones
 
-    public void sendEncouragementMessage(String userId) {
+    public void sendEncouragementMessage(String userId, long epochDay) {
 
         Optional<String> userChatIdOpt = getUserChatId(userId);
         if (userChatIdOpt.isEmpty()) {
@@ -50,16 +56,24 @@ public class TelegramNotificationService {
             return;
         }
 
+        // fetch bad mood entries using MoodInsightsService
+        List<MoodEntry> badMoodEntries = moodInsightsService.getBadMoodEntriesForDay(userId, epochDay);
+        if (badMoodEntries.isEmpty()) {
+            logger.info("No bad mood entries found for user {}. Skipping encouragement message.", userId);
+            return;
+        }
+
+        // craft the dynamic messages -> either stored in redis or from API call
+        String dynamicMessage = craftEncouragementMessage(userId, userId);
+
+        // Prepare the Telegram API request
         String userChatId = userChatIdOpt.get();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/json");
 
-        // dynamic messages -> either stored in redis or from API call
-        String message = "Things will be okay";
-
         JsonObject jsonObject = Json.createObjectBuilder()
                 .add("chat_id", userChatId)
-                .add("text", message)
+                .add("text", dynamicMessage)
                 .build();
 
         sendTelegramNotificationRequest(jsonObject);
@@ -67,7 +81,7 @@ public class TelegramNotificationService {
     }
 
     public void sendNotificationToLovedOnes(String userId, int currentStreak) {
-        
+
         Optional<List<String>> lovedOnesIdsOpt = getAllLovedOnes(userId);
         if (lovedOnesIdsOpt.isEmpty()) {
             logger.warn("Cannot send message because user {} has no loved ones linked.", userId);
@@ -97,7 +111,7 @@ public class TelegramNotificationService {
                 .add("chat_id", telegramChatId)
                 .add("text", message)
                 .build();
-        
+
         sendTelegramNotificationRequest(jsonObject);
     }
 
@@ -174,5 +188,21 @@ public class TelegramNotificationService {
         return Optional.ofNullable(telegramNotificationRepo.getUserName(userId))
                 .map(Object::toString)
                 .orElse("Unknown User");
+    }
+
+    public String summarizeBadMoodEntries(List<MoodEntry> badMoodEntries) {
+        StringBuilder summary = new StringBuilder("Recent bad mood patterns: \n");
+        for (MoodEntry entry : badMoodEntries) {
+            summary.append("-").append(entry.getNote())
+                    .append(" (Tags: ").append(String.join(", ", entry.getTags()))
+                    .append(")\n");
+        }
+        return summary.toString();
+    }
+
+    public String craftEncouragementMessage(String summary, String userId) {
+        String userName = getUserName(userId);
+        return externalLLMService.generateMessage(summary, userName);
+
     }
 }

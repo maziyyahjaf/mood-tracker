@@ -20,10 +20,10 @@ public class TelegramNotificationController {
     }
 
     @GetMapping("/send-notification")
-    public String sendManualNotification(@RequestParam("userId") String userId) {
+    public String sendManualNotification(@RequestParam("userId") String userId, @RequestParam("epochDay") long epochDay) {
         logger.info("Received request to send manual Telegram notification for userId: {}", userId);
         try {
-            telegramNotificationService.sendEncouragementMessage(userId);
+            telegramNotificationService.sendEncouragementMessage(userId, epochDay);
             return "Notification sent succesfully to userId: " + userId;
         } catch (Exception e) {
             logger.error("Failed to send notification for userId: {}. Error: {}", userId, e.getMessage(), e);
@@ -31,5 +31,5 @@ public class TelegramNotificationController {
         }
     }
     
-    
+    // use this to test the llm service 
 }
