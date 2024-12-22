@@ -81,6 +81,13 @@
             background-color: #d4f1f0;
         }
 
+        .tag-chip.active {
+            background-color: #008080;
+            color: #ffffff;
+            border-color: #006666;
+            box-shadow: 0 0 8px rgba(0, 128, 128, 0.3);
+        }
+
         .btn-primary {
             border-radius: 50px;
             background-color: #008080;
@@ -104,18 +111,10 @@
             <div class="tag-section mb-3">
                 <label for="tags" class="form-label">Select or Add Tags</label>
                 <div class="tag-container">
-                    <label class="tag-checkbox">
-                        <input type="checkbox" value="Work" class="tag-input"> Work
-                    </label>
-                    <label class="tag-checkbox">
-                        <input type="checkbox" value="Family" class="tag-input"> Family
-                    </label>
-                    <label class="tag-checkbox">
-                        <input type="checkbox" value="Exercise" class="tag-input"> Exercise
-                    </label>
-                    <label class="tag-checkbox">
-                        <input type="checkbox" value="Achievement" class="tag-input"> Achievement
-                    </label>
+                    <span class="tag-checkbox" data-tag="Work">Work</span>
+                    <span class="tag-checkbox" data-tag="Family">Family</span>
+                    <span class="tag-checkbox" data-tag="Exercise">Exercise</span>
+                    <span class="tag-checkbox" data-tag="Achievement">Achievement</span>
                 </div>
                 <div class="custom-tags mt-3">
                     <input type="text" id="customTagInput" class="form-control" placeholder="Add your own tag...">
@@ -126,20 +125,58 @@
     </div>
 
     <script>
-        const predefinedTags = document.querySelectorAll('.tag-input');
+        const predefinedTags = document.querySelectorAll('.tag-checkbox');
+        const customTagInput = document.getElementById('customTagInput');
+        const tagChipsContainer = document.getElementById('tagChipsContainer');
+        const selectedTags = new Set();
 
+        // Handle predefined tags
         predefinedTags.forEach(tag => {
-            const label = tag.parentElement;
+            tag.addEventListener('click', () => {
+                const tagValue = tag.getAttribute('data-tag');
 
-            tag.addEventListener('change', (e) => {
-                if (e.target.checked) {
-                    label.classList.add('active');
+                if (selectedTags.has(tagValue)) {
+                    selectedTags.delete(tagValue);
+                    tag.classList.remove('active');
                 } else {
-                    label.classList.remove('active');
+                    selectedTags.add(tagValue);
+                    tag.classList.add('active');
                 }
             });
         });
+
+        // Handle custom tag addition
+        customTagInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && customTagInput.value.trim() !== '') {
+                const tag = customTagInput.value.trim();
+
+                if (!selectedTags.has(tag)) {
+                    selectedTags.add(tag);
+                    addCustomTagChip(tag);
+                }
+
+                customTagInput.value = ''; // Clear input field
+                e.preventDefault();
+            }
+        });
+
+        // Add a custom tag chip
+        function addCustomTagChip(tag) {
+            const chip = document.createElement('span');
+            chip.textContent = tag;
+            chip.classList.add('tag-chip');
+
+            chip.addEventListener('click', () => {
+                selectedTags.delete(tag);
+                chip.remove();
+            });
+
+            chip.classList.add('active');
+            tagChipsContainer.appendChild(chip);
+        }
     </script>
 </body>
 
 </html>
+
+

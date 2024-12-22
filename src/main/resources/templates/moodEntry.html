@@ -85,6 +85,7 @@
             padding: 0.5rem 1rem;
             font-size: 0.9rem;
             cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
 
         .tag-checkbox input {
@@ -95,9 +96,15 @@
             background-color: #d4f1f0;
         }
 
-        .tag-checkbox input:checked+label {
+        /* .tag-checkbox input:checked+label {
             background-color: #008080;
             color: #ffffff;
+        } */
+        .tag-checkbox.active {
+            background-color: #008080;
+            color: #ffffff;
+            border-color: #006666;
+            box-shadow: 0 0 8px rgba(0, 128, 128, 0.3);
         }
 
         #customTagInput {
@@ -127,6 +134,13 @@
 
         .tag-chip:hover {
             background-color: #d4f1f0;
+        }
+
+        .tag-chip.active {
+            background-color: #008080;
+            color: #ffffff;
+            border-color: #006666;
+            box-shadow: 0 0 8px rgba(0, 128, 128, 0.3);
         }
 
         .btn-primary {
@@ -173,7 +187,12 @@
                 <label for="tags" class="form-label">Select or Add Tags</label>
                 <div class="tag-container">
                     <!-- Predefined Tags -->
-                    <div class="predefined-tags">
+                    <span class="tag-checkbox" data-tag="Work">Work</span>
+                    <span class="tag-checkbox" data-tag="Family">Family</span>
+                    <span class="tag-checkbox" data-tag="Exercise">Exercise</span>
+                    <span class="tag-checkbox" data-tag="Achievement">Achievement</span>
+
+                    <!-- <div class="predefined-tags">
                         <label class="tag-checkbox">
                             <input type="checkbox" value="Work" class="tag-input"> Work
                         </label>
@@ -186,7 +205,7 @@
                         <label class="tag-checkbox">
                             <input type="checkbox" value="Achievement" class="tag-input"> Achievement
                         </label>
-                    </div>
+                    </div> -->
 
                     <!-- Custom Tags -->
                     <div class="custom-tags mt-3">
@@ -222,7 +241,7 @@
         });
 
 
-        const predefinedTags = document.querySelectorAll('.tag-input');
+        const predefinedTags = document.querySelectorAll('.tag-checkbox');
         const customTagInput = document.getElementById('customTagInput');
         const tagChipsContainer = document.getElementById('tagChipsContainer');
         const tagsInput = document.getElementById('tags');
@@ -231,16 +250,20 @@
 
         // Handle predefined tag selection
         predefinedTags.forEach(tag => {
-            tag.addEventListener('change', (e) => {
-                if (e.target.checked) {
-                    selectedTags.add(e.target.value);
+            tag.addEventListener('click', () => {
+                const tagValue = tag.getAttribute('data-tag');
+
+                if (selectedTags.has(tagValue)) {
+                    selectedTags.delete(tagValue);
+                    tag.classList.remove('active');
                 } else {
-                    selectedTags.delete(e.target.value);
+                    selectedTags.add(tagValue);
+                    tag.classList.add('active');
                 }
-                updateTagsInput();
+                updateTagsInput(); // update hidden input?
             });
         });
-
+      
         // Handle custom tag addition
         customTagInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && customTagInput.value.trim() !== '') {
@@ -250,6 +273,7 @@
                     addTagChip(tag);
                     updateTagsInput();
                 }
+
                 customTagInput.value = ''; // Clear input field
                 e.preventDefault();
             }
@@ -265,6 +289,7 @@
                 chip.remove();
                 updateTagsInput();
             });
+            chip.classList.add('active');
             tagChipsContainer.appendChild(chip);
         }
 
