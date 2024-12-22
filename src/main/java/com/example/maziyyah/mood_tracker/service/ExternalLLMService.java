@@ -71,7 +71,7 @@ public class ExternalLLMService {
 
     }
 
-    public String  sendGeminiRequest(JsonObject jsonObject) {
+    public String sendGeminiRequest(JsonObject jsonObject) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/json");
 
