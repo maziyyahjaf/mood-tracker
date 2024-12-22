@@ -1,6 +1,7 @@
 package com.example.maziyyah.mood_tracker.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class MoodEntryView {
 
@@ -10,16 +11,18 @@ public class MoodEntryView {
     private String color;
     private String note;
     public String emoji;
+    public List<String> tags;
 
     public MoodEntryView() {
     }
 
-    public MoodEntryView(String moodEntryId, Date timestamp, Integer moodScore, String color, String note) {
+    public MoodEntryView(String moodEntryId, Date timestamp, Integer moodScore, String color, String note, List<String> tags) {
         this.moodEntryId = moodEntryId;
         this.timestamp = timestamp;
         this.moodScore = moodScore;
         this.color = color;
         this.note = note;
+        this.tags = tags;
     }
 
 
@@ -64,6 +67,15 @@ public class MoodEntryView {
         this.emoji = emoji;
     }
 
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    
     
 
   

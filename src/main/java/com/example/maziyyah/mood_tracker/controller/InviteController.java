@@ -29,7 +29,6 @@ public class InviteController {
         String name = inviteService.getInviterUserDetails(inviteToken);
 
         // generate the link to Telegram with the inviteToken code pre-filled
-        // String telegramBotUrl = telegramBotBaseUrl + "lovedone%3A" + inviteToken;
         String telegramBotUrl = telegramBotBaseUrl + inviteToken;
 
         System.out.println(telegramBotUrl);

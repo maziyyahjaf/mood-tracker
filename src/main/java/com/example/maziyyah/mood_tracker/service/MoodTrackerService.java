@@ -18,11 +18,15 @@ import com.example.maziyyah.mood_tracker.model.MoodEmoji;
 import com.example.maziyyah.mood_tracker.model.MoodEntry;
 import com.example.maziyyah.mood_tracker.model.MoodEntryView;
 import com.example.maziyyah.mood_tracker.repository.MoodTrackerRepository;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 
 @Service
 public class MoodTrackerService {
@@ -35,7 +39,7 @@ public class MoodTrackerService {
         this.streakService = streakService;
     }
 
-    public void addMoodEntry(String userId, long timestampEpochMilli, long epochDay, int moodScore, String note)
+    public void addMoodEntry(String userId, long timestampEpochMilli, long epochDay, int moodScore, String note, List<String> tags)
             throws JsonProcessingException {
 
         // check if it's a new day
@@ -46,7 +50,7 @@ public class MoodTrackerService {
 
         // create the MoodEntry obj -> add a new detailed mood entry
         String color = getColorForMood(moodScore);
-        MoodEntry moodEntry = new MoodEntry(timestampEpochMilli, epochDay, moodScore, color, note);
+        MoodEntry moodEntry = new MoodEntry(timestampEpochMilli, epochDay, moodScore, color, note, tags);
         String moodEntryId = moodEntry.getMoodEntryId();
         JsonObject moodEntryJson = moodEntryToJson(moodEntry);
 
@@ -96,6 +100,31 @@ public class MoodTrackerService {
         return moodEntries;
     }
 
+    // insights for each day?
+    public Map<Integer, Long> groupMoodEntriesForDayByMoodScore(List<MoodEntry> entries) {
+        return entries.stream()
+                        .collect(Collectors.groupingBy(MoodEntry::getMoodScore, Collectors.counting()));
+    }
+
+    // return all moods with the highest count
+    public List<Integer> getMostCommonMoodScore(List<MoodEntry> entries) {
+        Map<Integer, Long> moodScoreCounts = groupMoodEntriesForDayByMoodScore(entries);
+        long maxMoodScoreCount = moodScoreCounts.values().stream().max(Long::compare).orElse(0L);
+        return moodScoreCounts.entrySet().stream()
+                                .filter(entry -> entry.getValue() == maxMoodScoreCount)
+                                .map(Map.Entry::getKey)
+                                .collect(Collectors.toList());
+    }
+
+    // for end mood score map to the corresponding emoji?
+    public List<String> matchMoodScoreToMoodEmoji(List<Integer> commonMoodScoreList) {
+        List<String> commonMoodEmojiList = commonMoodScoreList.stream()
+                                                                .map(score -> MoodEmoji.getEmojiFor(score))
+                                                                .collect(Collectors.toList());
+        return commonMoodEmojiList;
+    }
+
+
     public List<DailyMoodSummary> getWeeklySummary(String userId) {
         long todayEpochDay = LocalDate.now().toEpochDay();
         List<DailyMoodSummary> weeklySummaries = new ArrayList<>();
@@ -128,6 +157,12 @@ public class MoodTrackerService {
     }
 
     public JsonObject moodEntryToJson(MoodEntry moodEntry) {
+        JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
+        
+        for (String tag : moodEntry.getTags()) {
+            arrBuilder.add(tag);
+        }
+
         JsonObject jsonObject = Json.createObjectBuilder()
                 .add("moodEntryId", moodEntry.getMoodEntryId())
                 .add("timestamp", moodEntry.getTimestamp())
@@ -135,6 +170,7 @@ public class MoodTrackerService {
                 .add("moodScore", moodEntry.getMoodScore())
                 .add("color", moodEntry.getColor())
                 .add("note", moodEntry.getNote())
+                .add("tags", arrBuilder.build())
                 .build();
         return jsonObject;
     }
@@ -145,8 +181,9 @@ public class MoodTrackerService {
         Integer moodScore = moodEntry.getMoodScore();
         String color = moodEntry.getColor();
         String note = moodEntry.getNote();
+        List<String> tags = moodEntry.getTags();
 
-        MoodEntryView moodEntryView = new MoodEntryView(moodEntryId, timestamp, moodScore, color, note);
+        MoodEntryView moodEntryView = new MoodEntryView(moodEntryId, timestamp, moodScore, color, note, tags);
         return moodEntryView;
     }
 
@@ -157,7 +194,13 @@ public class MoodTrackerService {
         Integer moodScore = jsonObject.getInt("moodScore");
         String color = jsonObject.getString("color");
         String note = jsonObject.getString("note");
-        MoodEntry moodEntry = new MoodEntry(moodEntryId, timestamp, epochDay, moodScore, color, note);
+        JsonArray tagsJsonArray = jsonObject.getJsonArray("tags");
+        
+        List<String> tags = new ArrayList<>();
+        for (JsonValue tag : tagsJsonArray) {
+            tags.add(tag.toString());
+        }
+        MoodEntry moodEntry = new MoodEntry(moodEntryId, timestamp, epochDay, moodScore, color, note, tags);
 
         return moodEntry;
     }

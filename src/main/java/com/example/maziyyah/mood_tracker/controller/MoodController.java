@@ -3,6 +3,7 @@ package com.example.maziyyah.mood_tracker.controller;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -26,13 +27,12 @@ import jakarta.servlet.http.HttpSession;
 public class MoodController {
 
     private final MoodTrackerService moodTrackerService;
-    
 
     public MoodController(MoodTrackerService moodTrackerService) {
         this.moodTrackerService = moodTrackerService;
     }
 
-    @GetMapping("") 
+    @GetMapping("")
     public String showMoodDashboard() {
         return "moodDashboard";
     }
@@ -45,8 +45,10 @@ public class MoodController {
     // handles form submission and redirects to daily view
     @PostMapping("/log")
     public String logMood(@RequestParam("moodScore") Integer moodScore,
-            @RequestParam("note") String note, HttpSession session) throws JsonProcessingException {
-        
+            @RequestParam("note") String note,
+            @RequestParam(value = "tags", required = false, defaultValue = "") String tagsString, HttpSession session)
+            throws JsonProcessingException {
+
         // get userId from session
         String userId = (String) session.getAttribute("userId");
 
@@ -59,13 +61,17 @@ public class MoodController {
         // get the user's local day (for grouping purposes)
         LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
         long epochDay = currentDate.toEpochDay(); // number of days since 1970-01-01 (local time)
-    
-        moodTrackerService.addMoodEntry(userId, timestampEpochMilli, epochDay, moodScore, note);
+
+        // hand null or empty tags
+        System.out.println("tags:" + tagsString);
+        // Convert tagsString to List<String>
+        List<String> tags = tagsString.isEmpty() ? List.of() : Arrays.asList(tagsString.split(","));
+
+        moodTrackerService.addMoodEntry(userId, timestampEpochMilli, epochDay, moodScore, note, tags);
 
         // redirect to view all entries for that day
         return "redirect:/moods/dailyview/" + epochDay;
     }
-
 
     // handles daily view (show all the moods for the day)
     @GetMapping("/dailyview/{epochDay}")

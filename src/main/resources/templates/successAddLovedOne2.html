@@ -9,89 +9,89 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 
+    <!-- Updated CSS -->
     <style>
         body {
             font-family: 'Poppins', Arial, sans-serif;
-            background: linear-gradient(180deg, #FFFBCC, #FFE4E1, #ADD8E6);
-            color: #333333;
+            background-color: #fef8f5;
+            color: #3a3a3a;
             margin: 0;
             padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
         }
 
         .container {
             max-width: 600px;
-            background: #FFFFFF;
-            border-radius: 32px;
-            padding: 40px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            margin: 50px auto;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
         h1 {
-            color: #0084FF;
-            font-size: 30px;
+            color: #ff7849;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         p {
-            font-size: 18px;
-            line-height: 1.6;
+            font-size: 16px;
+            line-height: 1.5;
             margin-bottom: 24px;
-            color: #666666;
+            color: #6e6e6e;
         }
 
         .invite-link {
-            padding: 16px;
-            background-color: #F7FAFC;
-            border: 2px dashed #0084FF;
-            border-radius: 24px;
+            padding: 14px;
+            background-color: #fff5f0;
+            border: 2px dashed #ff7849;
+            border-radius: 16px;
             display: inline-block;
             width: 100%;
             word-wrap: break-word;
-            font-size: 16px;
-            color: #3A3A3A;
+            font-size: 14px;
+            color: #3a3a3a;
             font-weight: 600;
         }
 
         .btn {
             display: inline-block;
-            background-color: #FF6F61;
-            color: #FFFFFF;
+            background-color: #ff7849;
+            color: #fff;
             text-align: center;
-            padding: 14px 28px;
-            font-size: 18px;
+            padding: 12px 24px;
+            font-size: 16px;
             font-weight: 600;
-            border-radius: 32px;
+            border-radius: 24px;
             text-decoration: none;
             margin: 10px 5px;
-            box-shadow: 0 8px 16px rgba(255, 111, 97, 0.3);
-            transition: all 0.3s ease-in-out;
+            transition: transform 0.2s, background-color 0.3s;
         }
 
         .btn:hover {
-            background-color: #E85B51;
-            transform: translateY(-2px);
+            background-color: #ff5c26;
+            transform: scale(1.05);
+        }
+
+        .btn-copy {
+            background-color: #4caf50;
+        }
+
+        .btn-copy:hover {
+            background-color: #388e3c;
+        }
+
+        .btn-copy, .btn {
+            cursor: pointer;
         }
 
         .feedback-message {
-            font-size: 16px;
-            color: #4CAF50;
-            margin-top: 16px;
+            font-size: 14px;
+            color: #4caf50;
+            margin-top: 10px;
             display: none;
-        }
-
-        /* Illustration */
-        .illustration {
-            margin: 20px auto;
-            width: 120px;
-            height: 120px;
-            background: url('https://source.unsplash.com/120x120/?smile') no-repeat center/cover;
-            border-radius: 50%;
         }
 
         /* Animation */
@@ -114,9 +114,6 @@
 <body>
 
     <div class="container">
-        <!-- Illustration -->
-        <!-- <div class="illustration"></div> -->
-
         <h1>🎉 Invite Created Successfully!</h1>
 
         <p>Share the link below with your loved one. They will be able to link their Telegram chat with the app.</p>
@@ -127,10 +124,9 @@
         </div>
 
         <!-- Buttons -->
-        <div>
-            <button class="btn" id="copy-button">📋 Copy Invite Link</button>
-            <a href="/moods" class="btn">🏠 Back to Home</a>
-        </div>
+        <button class="btn btn-copy" id="copy-button">📋 Copy Invite Link</button>
+        <a href="#" class="btn" id="share-button">📤 Share Link</a>
+        <a href="/moods" class="btn">🏠 Back to Dashboard</a>
 
         <!-- Feedback Message -->
         <div id="feedback-message" class="feedback-message">Link copied to clipboard!</div>
@@ -152,6 +148,23 @@
                 .catch(() => {
                     alert('Failed to copy the link. Please try again.');
                 });
+        });
+
+        const shareButton = document.getElementById('share-button');
+        shareButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            const inviteLink = inviteLinkElement.textContent;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join me on the Mood Tracker app!',
+                    text: 'Click this link to connect with me on Telegram:',
+                    url: inviteLink
+                })
+                .catch(console.error);
+            } else {
+                alert('Your browser does not support the Share feature.');
+            }
         });
     </script>
 

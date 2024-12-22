@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Link</title>
+
+    <!-- Add some basic CSS for styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #444;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        .invite-link {
+            padding: 10px;
+            background-color: #f3f3f3;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: inline-block;
+            width: 100%;
+            word-wrap: break-word;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .btn-copy {
+            background-color: #2196F3;
+        }
+        .btn-copy:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎉 Invite Created Successfully!</h1>
+
+        <p>Share the link below with your loved one. They will be able to link their Telegram chat with the app.</p>
+
+        <!-- Show the invite link -->
+        <div class="invite-link" id="invite-link">
+           <span th:text="${inviteLink}"></span> <!-- This will be replaced by the server with the actual link -->
+        </div>
+
+        <!-- Copy to clipboard button -->
+        <button class="btn btn-copy" id="copy-button">📋 Copy Invite Link</button>
+
+        <!-- Optional button to send via email or other methods -->
+        <a href="#" class="btn" id="share-button">📤 Share Link</a>
+
+        <!-- Button to go back to the dashboard -->
+        <a href="/moods" class="btn">🏠 Back to Dashboard</a>
+    </div>
+
+    <script>
+        // Copy the invite link to the clipboard
+        document.getElementById('copy-button').addEventListener('click', function() {
+            const inviteLinkElement = document.getElementById('invite-link');
+            const inviteLink = inviteLinkElement.textContent;
+            
+            // Copy link to clipboard
+            navigator.clipboard.writeText(inviteLink)
+                .then(() => {
+                    alert('Invite link copied to clipboard!');
+                })
+                .catch((error) => {
+                    alert('Failed to copy the link. Please try again.');
+                });
+        });
+
+        // Share link via browser's share functionality (if supported)
+        document.getElementById('share-button').addEventListener('click', function(event) {
+            event.preventDefault();
+            const inviteLinkElement = document.getElementById('invite-link');
+            const inviteLink = inviteLinkElement.textContent;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join me on the Mood Tracker app!',
+                    text: 'Click this link to connect with me on Telegram:',
+                    url: inviteLink
+                })
+                .then(() => console.log('Link shared successfully!'))
+                .catch((error) => console.log('Error sharing the link', error));
+            } else {
+                alert('Your browser does not support the Share feature. Copy the link manually instead.');
+            }
+        });
+    </script>
+
+</body>
+</html>

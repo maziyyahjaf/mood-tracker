@@ -51,7 +51,8 @@
         }
 
         .mood-button:hover {
-            transform: scale(1.2); /* Scale up on hover */
+            transform: scale(1.2);
+            /* Scale up on hover */
         }
 
         .textarea {
@@ -63,6 +64,69 @@
             resize: none;
             margin-bottom: 1rem;
             height: 100px;
+        }
+
+        .tag-section {
+            text-align: left;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag-checkbox {
+            display: inline-block;
+            background-color: #e7f8f7;
+            color: #008080;
+            border: 1px solid #b3e4e2;
+            border-radius: 16px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .tag-checkbox input {
+            display: none;
+        }
+
+        .tag-checkbox:hover {
+            background-color: #d4f1f0;
+        }
+
+        .tag-checkbox input:checked+label {
+            background-color: #008080;
+            color: #ffffff;
+        }
+
+        #customTagInput {
+            border-radius: 16px;
+            padding: 0.5rem;
+            border: 1px solid #b3e4e2;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        #tagChipsContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag-chip {
+            display: inline-block;
+            background-color: #e7f8f7;
+            color: #008080;
+            padding: 0.4rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .tag-chip:hover {
+            background-color: #d4f1f0;
         }
 
         .btn-primary {
@@ -104,6 +168,38 @@
             <!-- Note Input -->
             <textarea id="note" name="note" class="textarea" placeholder="Describe why you feel this way..."></textarea>
 
+            <!-- Tag Section -->
+            <div class="tag-section mb-3">
+                <label for="tags" class="form-label">Select or Add Tags</label>
+                <div class="tag-container">
+                    <!-- Predefined Tags -->
+                    <div class="predefined-tags">
+                        <label class="tag-checkbox">
+                            <input type="checkbox" value="Work" class="tag-input"> Work
+                        </label>
+                        <label class="tag-checkbox">
+                            <input type="checkbox" value="Family" class="tag-input"> Family
+                        </label>
+                        <label class="tag-checkbox">
+                            <input type="checkbox" value="Exercise" class="tag-input"> Exercise
+                        </label>
+                        <label class="tag-checkbox">
+                            <input type="checkbox" value="Achievement" class="tag-input"> Achievement
+                        </label>
+                    </div>
+
+                    <!-- Custom Tags -->
+                    <div class="custom-tags mt-3">
+                        <input type="text" id="customTagInput" class="form-control" placeholder="Add your own tag...">
+                        <div id="tagChipsContainer" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden Input to Store All Selected Tags -->
+            <input type="hidden" id="tags" name="tags" value="">
+
+
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Log Mood</button>
         </form>
@@ -124,6 +220,58 @@
                 button.style.transform = "scale(1.2)";
             });
         });
+
+
+        const predefinedTags = document.querySelectorAll('.tag-input');
+        const customTagInput = document.getElementById('customTagInput');
+        const tagChipsContainer = document.getElementById('tagChipsContainer');
+        const tagsInput = document.getElementById('tags');
+
+        let selectedTags = new Set();
+
+        // Handle predefined tag selection
+        predefinedTags.forEach(tag => {
+            tag.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    selectedTags.add(e.target.value);
+                } else {
+                    selectedTags.delete(e.target.value);
+                }
+                updateTagsInput();
+            });
+        });
+
+        // Handle custom tag addition
+        customTagInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && customTagInput.value.trim() !== '') {
+                const tag = customTagInput.value.trim();
+                if (!selectedTags.has(tag)) {
+                    selectedTags.add(tag);
+                    addTagChip(tag);
+                    updateTagsInput();
+                }
+                customTagInput.value = ''; // Clear input field
+                e.preventDefault();
+            }
+        });
+
+        // Add a chip for a custom tag
+        function addTagChip(tag) {
+            const chip = document.createElement('span');
+            chip.textContent = tag;
+            chip.classList.add('tag-chip');
+            chip.addEventListener('click', () => {
+                selectedTags.delete(tag);
+                chip.remove();
+                updateTagsInput();
+            });
+            tagChipsContainer.appendChild(chip);
+        }
+
+        // Update the hidden input with all selected tags
+        function updateTagsInput() {
+            tagsInput.value = Array.from(selectedTags).join(',');
+        }
     </script>
 </body>
 

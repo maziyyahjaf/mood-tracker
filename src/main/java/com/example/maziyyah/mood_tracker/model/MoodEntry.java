@@ -1,6 +1,7 @@
 package com.example.maziyyah.mood_tracker.model;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public class MoodEntry {
@@ -12,12 +13,14 @@ public class MoodEntry {
     private Integer moodScore; // Mood score (-2 to 2)
     private String color; // Corresponding mood color for score
     private String note; // User's note or message
+    private String emoji;
+    private List<String> tags;
     
 
     public MoodEntry() {
     }
 
-    public MoodEntry(Long timestamp, Long epochDay, Integer moodScore, String color, String note) {
+    public MoodEntry(Long timestamp, Long epochDay, Integer moodScore, String color, String note, List<String> tags) {
         this.moodEntryId = UUID.randomUUID().toString();
         this.timestamp = timestamp;
         this.epochDay = epochDay;
@@ -25,10 +28,11 @@ public class MoodEntry {
         this.moodScore = moodScore;
         this.color = color;
         this.note = note;
+        this.tags = tags;
        
     }
     
-    public MoodEntry(String moodEntryId, Long timestamp, Long epochDay, Integer moodScore, String color, String note) {
+    public MoodEntry(String moodEntryId, Long timestamp, Long epochDay, Integer moodScore, String color, String note, List<String> tags) {
         this.moodEntryId = moodEntryId;
         this.timestamp = timestamp;
         this.epochDay = epochDay;
@@ -36,6 +40,7 @@ public class MoodEntry {
         this.moodScore = moodScore;
         this.color = color;
         this.note = note;
+        this.tags = tags;
     }
 
     public Long getTimestamp() {
@@ -87,18 +92,21 @@ public class MoodEntry {
         this.dateString = dateString;
     }
 
-    
+    public String getEmoji() {
+        return emoji;
+    }
 
-    
+    public void setEmoji(String emoji) {
+        this.emoji = emoji;
+    }
 
+    public List<String> getTags() {
+        return tags;
+    }
 
-    
-
-    
-
-    
-
-
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
     
     
 }
