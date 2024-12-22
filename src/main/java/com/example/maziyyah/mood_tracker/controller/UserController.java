@@ -1,5 +1,6 @@
 package com.example.maziyyah.mood_tracker.controller;
 
+import java.time.ZoneId;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(path = {"/", "login"})
+    @GetMapping(path = { "/", "login" })
     public String showLoginPage() {
         return "userLogin";
     }
@@ -69,6 +70,7 @@ public class UserController {
         // add validations to the UserDTO model
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
+        model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
         return "userRegistration";
     }
 
@@ -77,11 +79,12 @@ public class UserController {
             BindingResult results, Model model) {
 
         if (results.hasErrors()) {
+            model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
             return "userRegistration";
         }
 
         // need to check if username is available etc
-        User user = new User(entity.getUsername(), entity.getName(), entity.getPassword());
+        User user = new User(entity.getUsername(), entity.getName(), entity.getPassword(), entity.getTimeZone());
         String linkingCode = userService.generateLinkingCode();
 
         if (!userService.addUser(user, linkingCode)) {
@@ -95,9 +98,6 @@ public class UserController {
 
         return "successRegistration";
 
-
     }
-
-   
 
 }

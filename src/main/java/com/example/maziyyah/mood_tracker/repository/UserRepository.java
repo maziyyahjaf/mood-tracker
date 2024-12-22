@@ -41,6 +41,7 @@ public class UserRepository {
         userHash.put("name", user.getName());
         userHash.put("alertThreshold", String.valueOf(user.getAlertThreshold()));
         userHash.put("encouragementOptIn", String.valueOf(user.isEncouragementOptIn()));
+        userHash.put("timeZone", user.getTimeZone());
 
         template.opsForHash().putAll(userKey, userHash);
         template.opsForValue().set(usernameKey, user.getUserId()); // Save the mapping of username -> userId
@@ -113,5 +114,7 @@ public class UserRepository {
 
        return !template.hasKey(usernameKey);
     }
+
+  
 
 }

@@ -33,10 +33,21 @@ public class MoodTrackerService {
 
     private final MoodTrackerRepository moodTrackerRepository;
     private final StreakService streakService;
+    private final MoodInsightsService moodInsightsService;
 
-    public MoodTrackerService(MoodTrackerRepository moodTrackerRepository, StreakService streakService) {
+    public MoodTrackerService(MoodTrackerRepository moodTrackerRepository, StreakService streakService, MoodInsightsService moodInsightsService) {
         this.moodTrackerRepository = moodTrackerRepository;
         this.streakService = streakService;
+        this.moodInsightsService = moodInsightsService;
+    }
+
+    public String getUserTimeZone(String userId) {
+        Object timeZoneObject = moodTrackerRepository.getUserTimeZone(userId);
+        if (timeZoneObject == null) {
+            return "UTC";
+        }
+        String timeZone = timeZoneObject.toString();
+        return timeZone;
     }
 
     public void addMoodEntry(String userId, long timestampEpochMilli, long epochDay, int moodScore, String note, List<String> tags)
@@ -98,30 +109,6 @@ public class MoodTrackerService {
         }
 
         return moodEntries;
-    }
-
-    // insights for each day?
-    public Map<Integer, Long> groupMoodEntriesForDayByMoodScore(List<MoodEntry> entries) {
-        return entries.stream()
-                        .collect(Collectors.groupingBy(MoodEntry::getMoodScore, Collectors.counting()));
-    }
-
-    // return all moods with the highest count
-    public List<Integer> getMostCommonMoodScore(List<MoodEntry> entries) {
-        Map<Integer, Long> moodScoreCounts = groupMoodEntriesForDayByMoodScore(entries);
-        long maxMoodScoreCount = moodScoreCounts.values().stream().max(Long::compare).orElse(0L);
-        return moodScoreCounts.entrySet().stream()
-                                .filter(entry -> entry.getValue() == maxMoodScoreCount)
-                                .map(Map.Entry::getKey)
-                                .collect(Collectors.toList());
-    }
-
-    // for end mood score map to the corresponding emoji?
-    public List<String> matchMoodScoreToMoodEmoji(List<Integer> commonMoodScoreList) {
-        List<String> commonMoodEmojiList = commonMoodScoreList.stream()
-                                                                .map(score -> MoodEmoji.getEmojiFor(score))
-                                                                .collect(Collectors.toList());
-        return commonMoodEmojiList;
     }
 
 

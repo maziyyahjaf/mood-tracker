@@ -3,6 +3,8 @@ package com.example.maziyyah.mood_tracker.controller;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,21 +54,29 @@ public class MoodController {
         // get userId from session
         String userId = (String) session.getAttribute("userId");
 
+        // Fetch the user's time zone
+        String userTimeZone = moodTrackerService.getUserTimeZone(userId);
+        ZoneId userZone = ZoneId.of(userTimeZone);
+
         // get the current timestamp (when form is submitted)
-        // LocalDateTime now = LocalDateTime.now();
+        // get the current timestamp in UTC
         Instant now = Instant.now();
         // long timestampEpochMilli = now.toInstant(ZoneOffset.UTC).toEpochMilli();
         long timestampEpochMilli = now.toEpochMilli();
 
-        // get the user's local day (for grouping purposes)
-        LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
+        // Convert timestamp to user's local time
+        ZonedDateTime userTime = now.atZone(ZoneOffset.UTC).withZoneSameInstant(userZone);
+
+        // extract the user's local date for grouping purposes
+        // LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
+        LocalDate currentDate = userTime.toLocalDate();
         long epochDay = currentDate.toEpochDay(); // number of days since 1970-01-01 (local time)
 
         // hand null or empty tags
-        System.out.println("tags:" + tagsString);
         // Convert tagsString to List<String>
         List<String> tags = tagsString.isEmpty() ? List.of() : Arrays.asList(tagsString.split(","));
 
+        // save mood entry with user-local time
         moodTrackerService.addMoodEntry(userId, timestampEpochMilli, epochDay, moodScore, note, tags);
 
         // redirect to view all entries for that day

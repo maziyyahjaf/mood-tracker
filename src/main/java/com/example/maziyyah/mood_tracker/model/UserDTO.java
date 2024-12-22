@@ -17,6 +17,9 @@ public class UserDTO {
     @Size(min = 9, message = "Password must be at least 9 characters.")
     private String password;
 
+    @NotEmpty(message = "Timezone cannot be empty")
+    private String timeZone;
+
     public String getUsername() {
         return username;
     }
@@ -35,6 +38,14 @@ public class UserDTO {
     public void setName(String name) {
         this.name = name;
     }
+    public String getTimeZone() {
+        return timeZone;
+    }
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    
 
     
 

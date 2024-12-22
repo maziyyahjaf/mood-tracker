@@ -6,31 +6,37 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.example.maziyyah.mood_tracker.constant.Constant;
 import com.example.maziyyah.mood_tracker.util.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-
 import jakarta.json.JsonObject;
-
 
 @Repository
 public class MoodTrackerRepository {
 
     @Qualifier(Utils.template01)
     private final RedisTemplate<String, Object> template;
-   
 
     public MoodTrackerRepository(@Qualifier(Utils.template01) RedisTemplate<String, Object> template) {
         this.template = template;
     }
 
+    public Object getUserTimeZone(String userId) {
+        String userKey = Constant.USER_KEY_PREFIX + userId; 
+        String hashKey = "timeZone";
+        return template.opsForHash().get(userKey, hashKey);
+
+    }
+
     // redisKey for moodEntries -> mood:{userId}:{epochDay}
-    public void addMoodEntry(String userId, long epochDay, String moodEntryId, JsonObject moodEntryJson) throws JsonProcessingException {
+    public void addMoodEntry(String userId, long epochDay, String moodEntryId, JsonObject moodEntryJson)
+            throws JsonProcessingException {
         String redisKey = "mood:" + userId + ":" + epochDay;
         String moodData = moodEntryJson.toString();
 
         template.opsForHash().put(redisKey, moodEntryId, moodData);
-    
+
     }
 
     // get all entries for a given day
@@ -53,7 +59,7 @@ public class MoodTrackerRepository {
         String redisKey = "user:" + userId + ":summary";
         String hashKey = String.valueOf(epochDay);
         Object dailySummary = template.opsForHash().get(redisKey, hashKey);
-        
+
         return dailySummary;
     }
 
@@ -67,9 +73,4 @@ public class MoodTrackerRepository {
         return template.opsForValue().get(redisKey);
     }
 
-
-
-    
-    
-    
 }

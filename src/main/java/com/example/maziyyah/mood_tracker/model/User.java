@@ -15,6 +15,7 @@ public class User {
     private String password;   
     private int alertThreshold; // number of bad days before loved ones are notified (optional)
     private boolean encouragementOptIn; // whether the user opts in for surprise encouragements (optional)
+    private String timeZone;
 
     
 
@@ -22,11 +23,12 @@ public class User {
     }
 
 
-    public User(String username, String name, String password) {
+    public User(String username, String name, String password, String timeZone) {
         this.userId = UUID.randomUUID().toString();
         this.username = username;
         this.name = name;
         this.password = password;
+        this.timeZone = timeZone;
         this.alertThreshold = 3; // default threshold (if applicable)
         this.encouragementOptIn = true; // default opt-in for encouragements;
 
@@ -101,6 +103,18 @@ public class User {
     public void setEncouragementOptIn(boolean encouragementOptIn) {
         this.encouragementOptIn = encouragementOptIn;
     }
+
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    
 
     
 
