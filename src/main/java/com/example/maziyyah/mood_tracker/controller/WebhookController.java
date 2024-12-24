@@ -52,7 +52,7 @@ public class WebhookController {
 
             if (messageText.startsWith("/start")) {
                 // extract the part after '/start'
-                if (messageText.length() > 6) { // check if ther is anything after '/start'
+                if (messageText.length() > 6) { // check if there is anything after '/start'
                     String token = messageText.substring(7).trim(); // Extract the part after '/start' and trim spaces
                     System.out.println("Extracted token: " + token);
 

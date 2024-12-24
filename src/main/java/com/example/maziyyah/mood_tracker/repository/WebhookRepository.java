@@ -43,6 +43,8 @@ public class WebhookRepository {
     public void linkLovedOneIdToChatId(String lovedOneId, String chatId) {
         String lovedOneKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOneId;
         template.opsForHash().put(lovedOneKey, Constant.LOVED_ONE_CHAT_ID_FIELD, chatId);
+        template.opsForHash().put(lovedOneKey, Constant.LOVED_ONE_TELEGRAM_STATUS_FIELD, "linked");
+
     }
 
     public void deleteInviteToken(String inviteToken) {

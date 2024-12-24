@@ -6,6 +6,7 @@ public class Constant {
     public static final String userChatIds = "userChatIds";
  
     public static final String LOVED_ONE_CHAT_ID_FIELD = "lovedOnesChatId";
+    public static final String LOVED_ONE_TELEGRAM_STATUS_FIELD = "telegram_status";
     public static final String STREAK_COUNT_FIELD = "streak_count";
     public static final String STREAK_START_DATE_FIELD = "streak_start_date";
     public static final String ALERT_FIELD = "alertThreshold";

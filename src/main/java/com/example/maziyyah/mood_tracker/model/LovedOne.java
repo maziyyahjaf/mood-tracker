@@ -9,6 +9,7 @@ public class LovedOne {
     private String contact;
     private String relationship;
     private Long chatId; // will be added after getting details?
+    private String telegramStatus;
     
     public LovedOne() {
     }
@@ -56,6 +57,18 @@ public class LovedOne {
     public void setLoveOneId(String loveOneId) {
         this.loveOneId = loveOneId;
     }
+
+
+    public String getTelegramStatus() {
+        return telegramStatus;
+    }
+
+
+    public void setTelegramStatus(String telegramStatus) {
+        this.telegramStatus = telegramStatus;
+    }
+
+    
 
     
 

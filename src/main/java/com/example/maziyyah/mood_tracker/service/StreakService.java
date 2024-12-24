@@ -47,6 +47,7 @@ public class StreakService {
         } else {
             // good day: reset streak
             currentStreak = 0;
+            // send "good" encouragement message?
             System.out.println("Streak reset to: " + currentStreak);
         }
 

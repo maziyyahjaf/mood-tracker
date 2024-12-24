@@ -1,6 +1,7 @@
 package com.example.maziyyah.mood_tracker.repository;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.example.maziyyah.mood_tracker.constant.Constant;
 import com.example.maziyyah.mood_tracker.model.LovedOne;
 import com.example.maziyyah.mood_tracker.util.Utils;
 
@@ -23,13 +25,15 @@ public class LovedOneRepository {
     }
 
     public void generateInviteLink(String userId, LovedOne lovedOne, String inviteToken) {
-        String inviteKey = "invite:" + inviteToken;
-        String lovedOneKey = "lovedOne:" + lovedOne.getLoveOneId();
+        String inviteKey = Constant.INVITE_KEY_PREFIX + inviteToken;
+        String lovedOneKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOne.getLoveOneId();
 
         Map<String, String> lovedOneData = new HashMap<>();
+        lovedOneData.put("lovedOneId", lovedOne.getLoveOneId());
         lovedOneData.put("name", lovedOne.getName());
         lovedOneData.put("contact", lovedOne.getContact());
         lovedOneData.put("relationship", lovedOne.getRelationship());
+        lovedOneData.put("telegram_status", "pending");
 
         Map<String, String> inviteData = new HashMap<>();
         inviteData.put("userId", userId);
@@ -42,25 +46,37 @@ public class LovedOneRepository {
 
     public void addLovedOne(String userId, LovedOne lovedOne) {
         String lovedOneId = lovedOne.getLoveOneId();
-        String userLovedOnesKey = "user:" + userId + ":loved_ones";
+        String userLovedOnesKey = Constant.USER_KEY_PREFIX + userId + ":loved_ones";
         template.opsForSet().add(userLovedOnesKey, lovedOneId);
     }
 
     public void removeLovedOne(String userId, LovedOne lovedOne) {
         String lovedOneId = lovedOne.getLoveOneId();
-        String userLovedOnesKey = "user:" + userId + ":loved_ones";
+        String userLovedOnesKey = Constant.USER_KEY_PREFIX + userId + ":loved_ones";
         template.opsForSet().remove(userLovedOnesKey, lovedOneId);
 
     }
 
     public Set<Object> getAllLovedOnes(String userId) {
-        String userLovedOnesKey = "user:" + userId + ":loved_ones";
-        return template.opsForSet().members(userLovedOnesKey);
+        String userLovedOnesKey = Constant.USER_KEY_PREFIX + userId + ":loved_ones";
+        Set<Object> lovedOnes = template.opsForSet().members(userLovedOnesKey);
+        return (lovedOnes != null) ? lovedOnes : Collections.emptySet();
     }
 
     public boolean isLovedOneLinked(String userId, String lovedOneId) {
-        String userLovedOnesKey = "user:" + userId + ":loved_ones";
+        String userLovedOnesKey = Constant.USER_KEY_PREFIX + userId + ":loved_ones";
         return template.opsForSet().isMember(userLovedOnesKey, lovedOneId);
+    }
+
+    public Object hasLovedOneLinkedTelegramChatId(String lovedOneId) {
+        String lovedOneKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOneId;
+        return template.opsForHash().get(lovedOneKey, Constant.LOVED_ONE_CHAT_ID_FIELD); 
+    }
+
+    public Map<Object,Object> getLovedOneData(String lovedOneId) {
+        String lovedOneKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOneId;
+        Map<Object, Object> lovedOneHash = template.opsForHash().entries(lovedOneKey);
+        return lovedOneHash;
     }
 
     
