@@ -26,7 +26,7 @@ public class UserRepository {
     }
 
     public Boolean addUser(User user, String linkingCode) {
-        String userKey = "user:" + user.getUserId(); // Use userId as the primary key
+        String userKey = Constant.USER_KEY_PREFIX + user.getUserId(); // Use userId as the primary key
         String usernameKey = "username:" + user.getUsername(); // Secondary index for username
 
         if (template.hasKey(usernameKey)) {
@@ -62,7 +62,7 @@ public class UserRepository {
         }
 
         // retrieve user details from the primary user hash
-        String userKey = "user:" + userId;
+        String userKey = Constant.USER_KEY_PREFIX + userId;
         Map<Object, Object> userHash = template.opsForHash().entries(userKey);
         return userHash;
     }
@@ -84,7 +84,7 @@ public class UserRepository {
         }
 
         // Update the username in the user hash
-        String userKey = "user:" + userId;
+        String userKey = Constant.USER_KEY_PREFIX + userId;
         template.opsForHash().put(userKey, "username", newUsername);
 
         // Update the secondary index
@@ -94,17 +94,17 @@ public class UserRepository {
         return true;
     }
 
-    public Boolean updatePassword(String username, String newPassword) {
+    public Boolean updatePassword(String userId, String newPassword) {
         // Retrieve userId from the secondary index
-        String usernameKey = "username:" + username;
-        String userId = (String) template.opsForValue().get(usernameKey);
+        // String usernameKey = "username:" + username;
+        // String userId = (String) template.opsForValue().get(usernameKey);
 
-        if (userId == null) {
-            return false;
-        }
+        // if (userId == null) {
+        //     return false;
+        // }
          
         // Update the password in the user hash
-        String userKey = "user:" + userId;
+        String userKey = Constant.USER_KEY_PREFIX + userId;
         template.opsForHash().put(userKey, "password", passwordEncoder.encode(newPassword));
         return true;
     }
@@ -113,6 +113,26 @@ public class UserRepository {
         String usernameKey = "username:" + username;
 
        return !template.hasKey(usernameKey);
+    }
+
+    public Map<Object,Object> getUserDetails(String userId) {
+        String userKey = Constant.USER_KEY_PREFIX + userId;
+        return template.opsForHash().entries(userKey);
+    }
+
+    public Boolean updateUserDetails(String userId, User user) {
+        String userKey = Constant.USER_KEY_PREFIX + userId;
+        
+        Map<String, String> userHash = new HashMap<>();
+        userHash.put("name", user.getName());
+        userHash.put("alertThreshold", String.valueOf(user.getAlertThreshold()));
+        userHash.put("encouragementOptIn", String.valueOf(user.isEncouragementOptIn()));
+        userHash.put("timeZone", user.getTimeZone());
+
+        template.opsForHash().putAll(userKey, userHash);
+
+        return true;
+
     }
 
   

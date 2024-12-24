@@ -73,10 +73,28 @@ public class UserService {
         return userRepo.updateUsername(oldUsername, newUsername);
     }
 
-    public Boolean updatePassword(String username, String newPassword) {
-        return userRepo.updatePassword(username, newPassword);
+    public Boolean updatePassword(String userId, String newPassword) {
+        return userRepo.updatePassword(userId, newPassword);
     }
     
+    public User getUserDetailsByUserId(String userId) {
+        Map<Object, Object> userHash = userRepo.getUserDetails(userId);
+        
+        User user = new User();
+        user.setUserId((String) userHash.get("userId"));
+        user.setUsername((String) userHash.get("username"));
+        user.setPassword((String) userHash.get("password"));
+        user.setName((String) userHash.get("name"));
+        user.setAlertThreshold(Integer.parseInt((String) userHash.get("alertThreshold")));
+        user.setEncouragementOptIn(Boolean.parseBoolean((String) userHash.get("encouragementOptIn")));
+        user.setTimeZone((String) userHash.get("timeZone"));
+
+        return user;
+    }
+
+    public boolean updateUserDetails(String userId, User user) {
+        return userRepo.updateUserDetails(userId, user);
+    }
    
 
     

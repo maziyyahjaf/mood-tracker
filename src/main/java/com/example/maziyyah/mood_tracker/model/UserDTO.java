@@ -10,11 +10,11 @@ public class UserDTO {
     private String username;
 
     @NotEmpty(message = "Name cannot be empty")
-    @Size(min = 5, message = "Name must be at least 5 characters.")
+    @Size(min = 3, message = "Name must be at least 3 characters.")
     private String name;
 
     @NotEmpty(message = "Password cannot be empty")
-    @Size(min = 9, message = "Password must be at least 9 characters.")
+    @Size(min = 8, message = "Password must be at least 8 characters.")
     private String password;
 
     @NotEmpty(message = "Timezone cannot be empty")

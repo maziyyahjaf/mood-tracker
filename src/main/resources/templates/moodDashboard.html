@@ -114,7 +114,7 @@
 
 <body>
     <div class="navbar">
-        <a href="#profile" class="nav-item">Profile Settings</a>
+        <a th:href="@{/profile}" class="nav-item">Profile Settings</a>
         <a th:href="@{/lovedones/add}" class="nav-item">Add Loved Ones</a>
         <a th:href="@{/moods/weeklyview}" class="nav-item">Weekly View</a>
     </div>
@@ -131,7 +131,7 @@
             </span>
             <span th:if="${dailyInsights.totalEntries ==0}">
                 <p>
-                    No mood entries logged yet today.
+                    No mood entries logged yet.
                 </p>
                 <p>
                     Ready to check in with yourself today?
