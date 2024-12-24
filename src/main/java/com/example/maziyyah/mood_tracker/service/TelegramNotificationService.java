@@ -101,6 +101,7 @@ public class TelegramNotificationService {
             String lovedOneIdChatId = lovedOneIdChatIdOpt.get();
             // get user details
             String userName = getUserName(userId);
+            // ** maybe make it dynamic as well?
             String message = userName + " has had a " + currentStreak + " tough days in a row. Send them some love ❤.";
             sendTelegramNotification(lovedOneIdChatId, message);
 

@@ -47,7 +47,7 @@ public class MoodTrackerRepository {
     }
 
     public void updateDailySummaryLog(String userId, long epochDay, JsonObject dailyMoodSummaryJson) {
-        String redisKey = "user:" + userId + ":summary";
+        String redisKey = Constant.USER_KEY_PREFIX + userId + ":summary";
         String hashKey = String.valueOf(epochDay);
         String dailySummaryData = dailyMoodSummaryJson.toString();
         template.opsForHash().put(redisKey, hashKey, dailySummaryData);
@@ -56,7 +56,7 @@ public class MoodTrackerRepository {
 
     // get daily summary
     public Object getDailySummaryLog(String userId, long epochDay) {
-        String redisKey = "user:" + userId + ":summary";
+        String redisKey = Constant.USER_KEY_PREFIX + userId + ":summary";
         String hashKey = String.valueOf(epochDay);
         Object dailySummary = template.opsForHash().get(redisKey, hashKey);
 
@@ -64,13 +64,18 @@ public class MoodTrackerRepository {
     }
 
     public void recordLastLogDay(String userId, long epochDay) {
-        String redisKey = "user:" + userId + ":last_log_day";
+        String redisKey = Constant.USER_KEY_PREFIX + userId + ":last_log_day";
         template.opsForValue().set(redisKey, String.valueOf(epochDay));
     }
 
     public Object getRecordedLastLogDay(String userId) {
-        String redisKey = "user:" + userId + ":last_log_day";
+        String redisKey = Constant.USER_KEY_PREFIX + userId + ":last_log_day";
         return template.opsForValue().get(redisKey);
+    }
+
+    public Object getUserName(String userId) {
+        String redisKey = Constant.USER_KEY_PREFIX + userId;
+        return template.opsForHash().get(redisKey, "name");
     }
 
 }

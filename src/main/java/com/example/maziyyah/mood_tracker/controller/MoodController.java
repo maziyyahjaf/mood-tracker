@@ -2,11 +2,13 @@ package com.example.maziyyah.mood_tracker.controller;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.maziyyah.mood_tracker.model.DailyMoodSummary;
 import com.example.maziyyah.mood_tracker.model.MoodEmoji;
 import com.example.maziyyah.mood_tracker.model.MoodEntryView;
+import com.example.maziyyah.mood_tracker.model.MoodInsights;
 import com.example.maziyyah.mood_tracker.service.MoodTrackerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -35,7 +38,62 @@ public class MoodController {
     }
 
     @GetMapping("")
-    public String showMoodDashboard() {
+    public String showMoodDashboard(HttpSession session, Model model) {
+        // get userId from session
+        String userId = (String) session.getAttribute("userId");
+
+        if (userId == null) {
+            return "redirect:/login"; // Redirect if not logged in
+        }
+
+        String name = moodTrackerService.getUserName(userId);
+
+        // Fetch the user's time zone
+        String userTimeZone = moodTrackerService.getUserTimeZone(userId);
+        ZoneId userZone = ZoneId.of(userTimeZone);
+
+        // get current time based on user's time zone
+        LocalTime currentTime = LocalTime.now(userZone);
+
+        Random random = new Random();
+
+        String greeting;
+        if (currentTime.isBefore(LocalTime.NOON)) {
+            String[] morningGreetings = {
+                    "Good morning, %s! Let's make today amazing!",
+                    "Morning sunshine, %s! How are you feeling today?",
+                    "Top of the morning, %s! Ready to seize the day?"
+            };
+            greeting = String.format(morningGreetings[random.nextInt(morningGreetings.length)], name);
+        } else if (currentTime.isBefore(LocalTime.of(18, 0))) {
+            String[] afternoonGreetings = {
+                    "Good afternoon, %s! Keep shining!",
+                    "Hello there, %s! Hope your afternoon is going well.",
+                    "Hi, %s! Don't forget to take a little break if you need one!"
+            };
+            greeting = String.format(afternoonGreetings[random.nextInt(afternoonGreetings.length)], name);
+        } else {
+            String[] eveningGreetings = {
+                    "Good evening, %s! Relax and enjoy your night.",
+                    "Hi, %s! How was your day?",
+                    "Hope you're having a cozy evening, %s!"
+            };
+            greeting = String.format(eveningGreetings[random.nextInt(eveningGreetings.length)], name);
+        }
+
+        model.addAttribute("greeting", greeting);
+
+        // Determine the current epoch day based on user's time zone
+        LocalDate currentDate = LocalDate.now(userZone);
+        long epochDay = currentDate.toEpochDay();
+
+        // Fetch daily insights
+        MoodInsights dailyInsights = moodTrackerService.getDailyInsights(userId, epochDay);
+
+        // Pass insights to the model
+        model.addAttribute("dailyInsights", dailyInsights);
+        model.addAttribute("currentDate", currentDate);
+
         return "moodDashboard";
     }
 

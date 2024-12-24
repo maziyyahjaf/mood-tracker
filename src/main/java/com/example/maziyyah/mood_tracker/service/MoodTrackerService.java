@@ -1,7 +1,11 @@
 package com.example.maziyyah.mood_tracker.service;
 
 import java.io.StringReader;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,11 +39,14 @@ public class MoodTrackerService {
     private final MoodTrackerRepository moodTrackerRepository;
     private final StreakService streakService;
     private final MoodInsightsService moodInsightsService;
+    private final ExternalLLMService externalLLMService;
 
-    public MoodTrackerService(MoodTrackerRepository moodTrackerRepository, StreakService streakService, MoodInsightsService moodInsightsService) {
+    public MoodTrackerService(MoodTrackerRepository moodTrackerRepository, StreakService streakService,
+            MoodInsightsService moodInsightsService, ExternalLLMService externalLLMService) {
         this.moodTrackerRepository = moodTrackerRepository;
         this.streakService = streakService;
         this.moodInsightsService = moodInsightsService;
+        this.externalLLMService = externalLLMService;
     }
 
     public String getUserTimeZone(String userId) {
@@ -51,7 +58,8 @@ public class MoodTrackerService {
         return timeZone;
     }
 
-    public void addMoodEntry(String userId, long timestampEpochMilli, long epochDay, int moodScore, String note, List<String> tags)
+    public void addMoodEntry(String userId, long timestampEpochMilli, long epochDay, int moodScore, String note,
+            List<String> tags)
             throws JsonProcessingException {
 
         // check if it's a new day
@@ -68,7 +76,7 @@ public class MoodTrackerService {
 
         // **Save the new mood entry first!**
         moodTrackerRepository.addMoodEntry(userId, epochDay, moodEntryId, moodEntryJson);
-    
+
         // update the summary log
         // **Now fetch the updated mood entries for the day**
         List<MoodEntry> moodEntries = getMoodEntriesForDay(userId, epochDay);
@@ -86,7 +94,7 @@ public class MoodTrackerService {
 
         // **Record the last log day for the user**
         moodTrackerRepository.recordLastLogDay(userId, epochDay);
-       
+
     }
 
     public List<MoodEntryView> getMoodEntryViewsForDay(String userId, long epochDay) {
@@ -112,7 +120,6 @@ public class MoodTrackerService {
         return moodEntries;
     }
 
-
     public List<DailyMoodSummary> getWeeklySummary(String userId) {
         long todayEpochDay = LocalDate.now().toEpochDay();
         List<DailyMoodSummary> weeklySummaries = new ArrayList<>();
@@ -125,7 +132,7 @@ public class MoodTrackerService {
 
     public Optional<DailyMoodSummary> getDailyMoodSummary(String userId, long epochDay) {
         Object dailySummaryObject = moodTrackerRepository.getDailySummaryLog(userId, epochDay);
-     
+
         if (dailySummaryObject == null) {
             System.out.println("No daily summary found for user " + userId + " on epochDay " + epochDay);
             return Optional.empty(); // no data, so return an empty Optional
@@ -136,12 +143,13 @@ public class MoodTrackerService {
             DailyMoodSummary dailyMoodSummary = toDailyMoodSummary(jsonObject);
             return Optional.of(dailyMoodSummary);
         } catch (Exception e) {
-            System.err.println("Error parsing daily summary for user " + userId + " on epochDay " + epochDay +": " + e.getMessage());
+            System.err.println("Error parsing daily summary for user " + userId + " on epochDay " + epochDay + ": "
+                    + e.getMessage());
             e.printStackTrace();
         }
 
         return Optional.empty(); // return empty optional if parsing fails
-        
+
     }
 
     public MoodInsights getDailyInsights(String userId, long epochDay) {
@@ -149,9 +157,37 @@ public class MoodTrackerService {
         return moodInsightsService.calculateDailyInsights(userId, epochDay, moodEntries);
     }
 
+    public List<MoodEntry> getBadMoodEntriesForDay(String userId, long epochDay) {
+        return moodInsightsService.getBadMoodEntriesForDay(userId, epochDay);
+    }
+
+    public List<MoodEntry> getGoodMoodEntriesForDay(String userId, long epochDay) {
+        return moodInsightsService.getGoodMoodEntriesForDay(userId, epochDay);
+    }
+
+    public String summarizeMoodEntriesForTheDaySoFar(String userId, List<MoodEntry> entries) {
+        StringBuilder summary = new StringBuilder("Mood Logs for today so far:\n");
+        for (MoodEntry entry : entries) {
+            try {
+                // Convert epoch milliseconds to formatted time
+                String formattedTime = epochToFormattedTime(userId, entry.getTimestamp());
+                summary.append("- ").append(formattedTime).append(": ").append(entry.getNote())
+                       .append(" (Tags: ").append(String.join(", ", entry.getTags()))
+                       .append(")\n");
+            } catch (Exception e) {
+                summary.append("- Error formatting time for entry with note: ").append(entry.getNote()).append("\n");
+            }
+        }
+        return summary.toString();
+    }
+
+    public String craftAdviceForTheDay(String summary) {
+        return externalLLMService.generateAdviceForTheDay(summary);
+    }
+
     public JsonObject moodEntryToJson(MoodEntry moodEntry) {
         JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
-        
+
         for (String tag : moodEntry.getTags()) {
             arrBuilder.add(tag);
         }
@@ -188,7 +224,7 @@ public class MoodTrackerService {
         String color = jsonObject.getString("color");
         String note = jsonObject.getString("note");
         JsonArray tagsJsonArray = jsonObject.getJsonArray("tags");
-        
+
         List<String> tags = new ArrayList<>();
         for (JsonValue tag : tagsJsonArray) {
             tags.add(tag.toString());
@@ -226,7 +262,7 @@ public class MoodTrackerService {
             // possible parsing issues?
             return -1;
         }
-                
+
     }
 
     public JsonObject dailyMoodSummaryToJson(DailyMoodSummary dailyMoodSummary) {
@@ -248,6 +284,34 @@ public class MoodTrackerService {
         DailyMoodSummary dailyMoodSummary = new DailyMoodSummary(epochDay, averageMoodScore, numOfMoodEntries,
                 summaryColor);
         return dailyMoodSummary;
+    }
+
+    public long getCurrentEpochDay(String userId) {
+        String userTimeZone = getUserTimeZone(userId);
+        ZoneId userZone = ZoneId.of(userTimeZone);
+        return LocalDate.now(userZone).toEpochDay();
+    }
+
+    public String epochToFormattedTime(String userId, long epochMilli) {
+
+        // Fetch the user's time zone
+        String userTimeZone = getUserTimeZone(userId);
+        ZoneId userZone = ZoneId.of(userTimeZone);
+
+        // Convert epoch milliseconds to LocalDateTime
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), userZone);
+
+        // Format the time
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a"); // For example, "9:00 AM"
+        String formattedTime = dateTime.format(formatter);
+
+        return formattedTime;
+    }
+
+    public String getUserName(String userId) {
+        return Optional.ofNullable(moodTrackerRepository.getUserName(userId))
+                .map(Object::toString)
+                .orElse("Unknown User");
     }
 
     private String getColorForMood(int moodScore) {

@@ -201,6 +201,18 @@ public class MoodInsightsService {
         return badMoodEntries;
     }
 
+    public List<MoodEntry> getGoodMoodEntriesForDay(String userId, long epochDay) {
+        List<MoodEntry> entries = getMoodEntriesForDay(userId, epochDay);
+
+        // filter entries with good mood scores
+        List<MoodEntry> goodMoodEntries = entries.stream()
+                                                .filter(entry -> entry.getMoodScore() >= 1)
+                                                .collect(Collectors.toList());
+        return goodMoodEntries;
+    }
+
+    
+
     public MoodEntry toMoodEntry(JsonObject jsonObject) {
         String moodEntryId = jsonObject.getString("moodEntryId");
         Long timestamp = jsonObject.getJsonNumber("timestamp").longValue();
