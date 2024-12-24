@@ -27,6 +27,7 @@ public class LovedOneRepository {
     public void generateInviteLink(String userId, LovedOne lovedOne, String inviteToken) {
         String inviteKey = Constant.INVITE_KEY_PREFIX + inviteToken;
         String lovedOneKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOne.getLoveOneId();
+        String inviteTokenKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOne.getLoveOneId() + ":invite_token";
 
         Map<String, String> lovedOneData = new HashMap<>();
         lovedOneData.put("lovedOneId", lovedOne.getLoveOneId());
@@ -42,6 +43,7 @@ public class LovedOneRepository {
 
         template.opsForHash().putAll(lovedOneKey, lovedOneData);
         template.opsForHash().putAll(inviteKey, inviteData);
+        template.opsForValue().set(inviteTokenKey, inviteToken);
     }
 
     public void addLovedOne(String userId, LovedOne lovedOne) {
