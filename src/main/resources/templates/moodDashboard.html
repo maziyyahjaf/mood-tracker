@@ -11,7 +11,6 @@
 
 
     <style>
-        
         /* General Reset */
         * {
             margin: 0;
@@ -95,19 +94,40 @@
         }
 
         /* Log Button */
-        .log-button button {
+        .log-button .button{
+            /* margin-top: 10px; Adds spacing above the button */
+            display: inline-block;
+        }
+
+
+        .log-button .button {
             background-color: #4a90e2;
             color: white;
             border: none;
             border-radius: 25px;
             padding: 15px 30px;
             font-size: 1rem;
+            text-decoration: none;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
-        .log-button button:hover {
+        .log-button .button:hover {
             background-color: #357ac9;
+        }
+
+        /* Focus State for Accessibility */
+        .log-button .button:focus {
+            outline: none;
+            box-shadow: 0 0 5px #4a90e2;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            .log-button .button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -145,7 +165,7 @@
             </span>
         </div>
         <div class="log-button">
-            <button>Log Mood</button>
+            <a href="/moods/log" class="button">Log Mood</a>
         </div>
     </div>
 </body>
