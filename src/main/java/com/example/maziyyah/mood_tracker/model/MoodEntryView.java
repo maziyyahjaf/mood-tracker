@@ -1,5 +1,6 @@
 package com.example.maziyyah.mood_tracker.model;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +8,7 @@ public class MoodEntryView {
 
     private String moodEntryId;
     private Date timestamp;
+    private ZonedDateTime zonedDateTime;
     private Integer moodScore;
     private String color;
     private String note;
@@ -74,6 +76,16 @@ public class MoodEntryView {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+
+    public ZonedDateTime getZonedDateTime() {
+        return zonedDateTime;
+    }
+
+    public void setZonedDateTime(ZonedDateTime zonedDateTime) {
+        this.zonedDateTime = zonedDateTime;
+    }
+
+    
 
     
     

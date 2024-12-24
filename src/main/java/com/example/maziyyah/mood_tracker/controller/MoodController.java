@@ -153,11 +153,17 @@ public class MoodController {
             return "redirect:/login"; // Redirect if not logged in
         }
 
+        // Fetch the user's time zone
+        String userTimeZone = moodTrackerService.getUserTimeZone(userId);
+        ZoneId userZone = ZoneId.of(userTimeZone);
+
         // get all the mood entries for the specified day
         List<MoodEntryView> moodEntries = moodTrackerService.getMoodEntryViewsForDay(userId, epochDay);
         moodEntries.sort((e1, e2) -> e2.getTimestamp().compareTo(e1.getTimestamp()));
 
         for (MoodEntryView entry : moodEntries) {
+            ZonedDateTime zonedDateTime = entry.getTimestamp().toInstant().atZone(userZone);
+            entry.setZonedDateTime(zonedDateTime);
             entry.setEmoji(MoodEmoji.getEmojiFor(entry.getMoodScore()));
         }
 

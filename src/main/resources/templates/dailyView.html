@@ -110,7 +110,7 @@
 
                     <!-- Time -->
                     <div class="entry-time">
-                        <span th:text="${#dates.format(entry.timestamp, 'hh:mm a')}"></span>
+                        <span th:text="${#temporals.format(entry.zonedDateTime, 'hh:mm a')}"></span>
                     </div>
                 </div>
             </th:block>
