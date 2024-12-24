@@ -160,7 +160,7 @@
             <span th:if="${dailyInsights.totalEntries > 0}">
                 <p>
                     Lately, you've been feeling <strong><span
-                            [[${dailyInsights.mostCommonMoodEmoji[0]}]]></span></strong>.
+                            th:text="${dailyInsights.mostCommonMoodEmoji[0]}"></span></strong>.
                 </p>
             </span>
         </div>
