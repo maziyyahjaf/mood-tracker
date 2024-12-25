@@ -59,7 +59,7 @@ public class LovedOneService {
     public void deleteLovedOneData(String userId, String lovedOneId) {
         logger.info("Deleting loved one with id: {}", lovedOneId);
         if (removeLovedOne(userId, lovedOneId)) {
-            lovedOneRepository.deleteLovedOneData(userId);
+            lovedOneRepository.deleteLovedOneData(lovedOneId);
             lovedOneRepository.deleteLovedOneInviteToken(lovedOneId);
         }
         logger.error("Error deleting loved one with id: {}", lovedOneId);

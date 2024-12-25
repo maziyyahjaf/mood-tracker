@@ -74,8 +74,8 @@ public class LovedOneRepository {
 
     }
 
-    public void deleteLovedOneData(String userId) {
-        String lovedOneKey = Constant.LOVED_ONE_KEY_PREFIX + userId;
+    public void deleteLovedOneData(String lovedOneId) {
+        String lovedOneKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOneId;
         template.delete(lovedOneKey);
     }
 
