@@ -14,6 +14,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.maziyyah.mood_tracker.model.DailyMoodSummary;
@@ -41,6 +43,8 @@ public class MoodTrackerService {
     private final StreakService streakService;
     private final MoodInsightsService moodInsightsService;
     private final ExternalLLMService externalLLMService;
+    private static final Logger logger = LoggerFactory.getLogger(MoodTrackerService.class);
+
 
     public MoodTrackerService(MoodTrackerRepository moodTrackerRepository, StreakService streakService,
             MoodInsightsService moodInsightsService, ExternalLLMService externalLLMService) {
@@ -135,7 +139,8 @@ public class MoodTrackerService {
         Object dailySummaryObject = moodTrackerRepository.getDailySummaryLog(userId, epochDay);
 
         if (dailySummaryObject == null) {
-            System.out.println("No daily summary found for user " + userId + " on epochDay " + epochDay);
+            logger.warn("No daily summary for user {} on epochDay {}", userId, epochDay);
+            // System.out.println("No daily summary found for user " + userId + " on epochDay " + epochDay);
             return Optional.empty(); // no data, so return an empty Optional
         }
 
@@ -144,9 +149,10 @@ public class MoodTrackerService {
             DailyMoodSummary dailyMoodSummary = toDailyMoodSummary(jsonObject);
             return Optional.of(dailyMoodSummary);
         } catch (Exception e) {
-            System.err.println("Error parsing daily summary for user " + userId + " on epochDay " + epochDay + ": "
-                    + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error parsing daily summary for user {} on epochDay {}:", userId, epochDay, e);
+            // System.err.println("Error parsing daily summary for user " + userId + " on epochDay " + epochDay + ": "
+            //         + e.getMessage());
+            // e.printStackTrace();
         }
 
         return Optional.empty(); // return empty optional if parsing fails
@@ -258,14 +264,18 @@ public class MoodTrackerService {
     }
 
     public long getRecordedLastLogDay(String userId) {
+        logger.info("Fetching last logged day for user {}", userId);
         Object lastLogDay = moodTrackerRepository.getRecordedLastLogDay(userId);
         if (lastLogDay == null) {
+            logger.warn("No recorded last logged day for user {}", userId);
             return -1;
         }
         try {
+            logger.info("Recorded last logged day for user {}:", userId, lastLogDay.toString());
             return Long.parseLong(lastLogDay.toString());
         } catch (NumberFormatException e) {
             // possible parsing issues?
+            logger.error("Error parsing recorded last logged day for user {}", userId);
             return -1;
         }
 

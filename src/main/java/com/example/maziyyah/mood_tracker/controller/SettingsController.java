@@ -80,7 +80,7 @@ public class SettingsController {
         User user = userService.getUserDetailsByUserId(userId);
 
         // Update password
-        if (entity.getPassword() != null || !entity.getPassword().isEmpty()) {
+        if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
             userService.updatePassword(userId, entity.getPassword());
         }
 
