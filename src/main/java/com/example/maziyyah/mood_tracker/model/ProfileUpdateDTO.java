@@ -7,15 +7,15 @@ import jakarta.validation.constraints.Pattern;
 
 public class ProfileUpdateDTO {
     
-    @NotEmpty(message = "Username cannot be empty")
-    @Pattern(regexp = "^|[a-zA-Z0-9._-]{5,50}$", message = "Username must be 5-50 characters and contain only letters, numbers, dots, underscores, or hyphens if provided")
+    @NotEmpty(message = "Oops! It looks like you forgot to enter a username.")
+    @Pattern(regexp = "^|[a-zA-Z0-9._-]{5,50}$", message = "Your username should be 5-50 characters and can include letters, numbers, dots, underscores, or hyphens.")
     private String username;
     
-    @Pattern(regexp = "^$|.{8,}", message = "Password must be at least 8 characters if provided")
+    @Pattern(regexp = "^$|.{8,}", message = "To keep your account secure, passwords should be at least 8 characters long if you're updating it.")
     private String password;
 
-    @NotEmpty(message = "Name cannot be empty")
-    @Pattern(regexp = "^|[a-zA-Z .'-]{3,50}$", message = "Name must be 3-50 characters and contain only letters, spaces, dots, hyphens, or apostrophes if provided")
+    @NotEmpty(message = "We’d love to know your name! Could you fill this in?")
+    @Pattern(regexp = "^|[a-zA-Z .'-]{3,50}$", message = "Your name should be 3-50 characters and can include letters, spaces, dots, hyphens, or apostrophes.")
     private String name;
 
     @Min(1)
@@ -24,7 +24,7 @@ public class ProfileUpdateDTO {
 
     private boolean encouragementOptIn;
 
-    @NotEmpty(message = "Timezone cannot be empty")
+    @NotEmpty(message = "Please select a timezone to make sure everything runs smoothly.")
     private String timeZone;
 
     public String getUsername() {

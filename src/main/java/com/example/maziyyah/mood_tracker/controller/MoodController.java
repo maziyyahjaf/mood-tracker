@@ -62,21 +62,30 @@ public class MoodController {
             String[] morningGreetings = {
                     "Good morning, %s! Let's make today amazing!",
                     "Morning sunshine, %s! How are you feeling today?",
-                    "Top of the morning, %s! Ready to seize the day?"
+                    "Top of the morning, %s! Ready to seize the day?",
+                    "Good morning, %s! A fresh start to a brand new day.",
+                    "Rise and shine, %s! Today is full of possibilities.",
+                    "Hey there, %s! Wishing you a bright and cheerful morning!"
             };
             greeting = String.format(morningGreetings[random.nextInt(morningGreetings.length)], name);
         } else if (currentTime.isBefore(LocalTime.of(18, 0))) {
             String[] afternoonGreetings = {
                     "Good afternoon, %s! Keep shining!",
                     "Hello there, %s! Hope your afternoon is going well.",
-                    "Hi, %s! Don't forget to take a little break if you need one!"
+                    "Hi, %s! Don't forget to take a little break if you need one!",
+                    "Good afternoon, %s! Keep up the great work—you’re doing amazing.",
+                    "Hey, %s! Just a little reminder to pause and breathe.",
+                    "Hi, %s! How's your day unfolding so far?"
             };
             greeting = String.format(afternoonGreetings[random.nextInt(afternoonGreetings.length)], name);
         } else {
             String[] eveningGreetings = {
                     "Good evening, %s! Relax and enjoy your night.",
                     "Hi, %s! How was your day?",
-                    "Hope you're having a cozy evening, %s!"
+                    "Hope you're having a cozy evening, %s!",
+                    "Good evening, %s! It's time to wind down and recharge.",
+                    "Hey, %s! Take a moment to reflect on the good parts of your day.",
+                    "Hi, %s! Here’s to a peaceful and restful evening for you."
             };
             greeting = String.format(eveningGreetings[random.nextInt(eveningGreetings.length)], name);
         }
