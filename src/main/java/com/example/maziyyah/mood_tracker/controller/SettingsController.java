@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.maziyyah.mood_tracker.model.ProfileUpdateDTO;
@@ -18,6 +19,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping("/profile")
 public class SettingsController {
 
     private final UserService userService;
@@ -26,7 +28,7 @@ public class SettingsController {
         this.userService = userService;
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/settings")
     public String showProfileSettings(HttpSession session, Model model) {
         // Retrieve userId from session
         String userId = (String) session.getAttribute("userId");
@@ -49,7 +51,7 @@ public class SettingsController {
         return "profileSettings";
     }
 
-    @PostMapping("/profile")
+    @PostMapping("/settings")
     public String updateProfile(@Valid @ModelAttribute("profileUpdateDTO") ProfileUpdateDTO entity,
             @RequestParam("originalUsername") String originalUsername,
             BindingResult bindingResult,

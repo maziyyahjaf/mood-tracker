@@ -75,12 +75,16 @@
         }
 
         .error-message {
+            display: inline-block;
             color: #e74c3c;
             background-color: #fdecea;
             border-radius: 8px;
             font-size: 0.9rem;
             padding: 5px 10px;
-            margin-top: 5px;
+            margin-top: 5px; /* Ensures space between the input field and error */
+            margin-left: 2px; /* Optional small indentation */
+            line-height: 1.4; /* Improves readability */
+            position: relative; /* Ensures it does not interfere with input borders */
         }
     </style>
 </head>

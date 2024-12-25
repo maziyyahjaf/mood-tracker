@@ -89,7 +89,6 @@ public class MoodController {
 
         // Fetch daily insights
         MoodInsights dailyInsights = moodTrackerService.getDailyInsights(userId, epochDay);
-
         // Pass insights to the model
         model.addAttribute("dailyInsights", dailyInsights);
         model.addAttribute("currentDate", currentDate);

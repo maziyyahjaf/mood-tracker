@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.example.maziyyah.mood_tracker.model.Mood;
 import com.example.maziyyah.mood_tracker.model.MoodEntry;
 import com.example.maziyyah.mood_tracker.model.MoodInsights;
+import com.example.maziyyah.mood_tracker.model.MoodInsightsDTO;
 import com.example.maziyyah.mood_tracker.repository.MoodInsightsRepo;
 
 import jakarta.json.Json;
@@ -33,6 +34,28 @@ public class MoodInsightsService {
 
     public MoodInsightsService(MoodInsightsRepo moodInsightsRepo) {
         this.moodInsightsRepo = moodInsightsRepo;
+    }
+
+    public MoodInsightsDTO fetchDailyDashboardInsights(String userId, long epochDay, List<MoodEntry> entries) {
+        MoodInsightsDTO insightsDTO = new MoodInsightsDTO();
+
+        // Convert epochDay to LocalDate
+        LocalDate date = LocalDate.ofEpochDay(epochDay);
+
+        insightsDTO.setUserId(userId);
+        insightsDTO.setEpochDay(epochDay);
+        insightsDTO.setDate(date);
+
+        List<Integer> mostCommonMoodScore = getMostCommonMoodScore(entries);
+        List<Mood> mostCommonMoods = getMoods(mostCommonMoodScore);
+        List<String> mostCommonMoodsEmoji = getMostCommonMoodsEmoji(mostCommonMoods);
+        insightsDTO.setMostCommonMoodEmoji(mostCommonMoodsEmoji);
+
+        Integer numOfMoodEntriesForTheDay = totalEntries(entries);
+        insightsDTO.setTotalEntries(numOfMoodEntriesForTheDay);
+
+        return insightsDTO;
+
     }
 
     public MoodInsights calculateDailyInsights(String userId, long epochDay, List<MoodEntry> entries) {
@@ -196,8 +219,8 @@ public class MoodInsightsService {
 
         // filter entries with bad mood scores
         List<MoodEntry> badMoodEntries = entries.stream()
-                                                .filter(entry -> entry.getMoodScore() <= -1) 
-                                                .collect(Collectors.toList());
+                .filter(entry -> entry.getMoodScore() <= -1)
+                .collect(Collectors.toList());
         return badMoodEntries;
     }
 
@@ -206,12 +229,10 @@ public class MoodInsightsService {
 
         // filter entries with good mood scores
         List<MoodEntry> goodMoodEntries = entries.stream()
-                                                .filter(entry -> entry.getMoodScore() >= 1)
-                                                .collect(Collectors.toList());
+                .filter(entry -> entry.getMoodScore() >= 1)
+                .collect(Collectors.toList());
         return goodMoodEntries;
     }
-
-    
 
     public MoodEntry toMoodEntry(JsonObject jsonObject) {
         String moodEntryId = jsonObject.getString("moodEntryId");

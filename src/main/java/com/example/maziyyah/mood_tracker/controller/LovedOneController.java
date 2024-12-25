@@ -106,7 +106,7 @@ public class LovedOneController {
         }
 
         if (contact.isEmpty()) {
-            contactError = "It looks like the contact number is missing. Could you provide it to proceed?";
+            contactError = "It looks like the contact number is missing.";
         }
 
         if (relationship.isEmpty()) {
