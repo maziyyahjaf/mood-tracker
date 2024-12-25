@@ -177,8 +177,12 @@ public class LovedOneService {
 
         // generate and log new token
         return generateNewInviteToken(userId, lovedOneId);
-        
-        
+
+    }
+
+    public String generateNewInviteLink(String newInviteToken) {
+        String newInviteLink = appInviteUrl + newInviteToken;
+        return newInviteLink;
     }
 
     private String generateNewInviteToken(String userId, String lovedOneId) {

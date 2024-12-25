@@ -33,20 +33,20 @@
                         <th:block th:if="${lovedOne.status == 'Linked ✅'}">
                             <td>
                                 <a class="btn btn-danger"
-                                    th:href="@{/lovedones/{lovedOneId}(lovedOneId=${lovedOne.lovedOneId})/delete}">Remove</a>
+                                    th:href="@{/lovedones/{lovedOneId}/delete(lovedOneId=${lovedOne.lovedOneId})}">Remove</a>
                             </td>
                         </th:block>
                         <th:block th:if="${lovedOne.status == 'Waiting for Join'}">
                             <td>
                                 <a class="btn btn-primary"
-                                    th:href="@{/lovedones/{lovedOneId}(lovedOneId=${lovedOne.lovedOneId})/resend}">Resend
+                                    th:href="@{/lovedones/{lovedOneId}/resend(lovedOneId=${lovedOne.lovedOneId})}">Resend
                                     Invite</a>
                             </td>
                         </th:block>
                         <th:block th:if="${lovedOne.status == 'Invite Expired'}">
                         <td>
                             <a class="btn btn-primary"
-                                th:href="@{/lovedones/{lovedOneId}(lovedOneId=${lovedOne.lovedOneId})/resend}">Resend
+                                th:href="@{/lovedones/{lovedOneId}/resend(lovedOneId=${lovedOne.lovedOneId})}">Resend
                                 Invite</a>
                         </td>
                         </th:block>

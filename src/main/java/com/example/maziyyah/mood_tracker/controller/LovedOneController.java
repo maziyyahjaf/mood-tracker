@@ -3,6 +3,8 @@ package com.example.maziyyah.mood_tracker.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,8 @@ import jakarta.servlet.http.HttpSession;
 public class LovedOneController {
 
     private final LovedOneService lovedOneService;
+        private static final Logger logger = LoggerFactory.getLogger(LovedOneController.class);
+
 
     public LovedOneController(LovedOneService lovedOneService) {
         this.lovedOneService = lovedOneService;
@@ -62,17 +66,25 @@ public class LovedOneController {
 
     }
 
-    @GetMapping("/lovedones/{lovedOneId}/delete")
+    @GetMapping("/{lovedOneId}/delete")
     public String removeLovedOne(@PathVariable("lovedOneId") String lovedOneId,  HttpSession session) {
         String userId = (String) session.getAttribute("userId");
+        logger.info("lovedOneId from delete: {} " ,lovedOneId);
         lovedOneService.deleteLovedOneData(userId, lovedOneId);
         return "redirect:/lovedones";
     }
 
-    @GetMapping("/lovedones/{lovedOneId}/resend")
-    public String resendInvite(@PathVariable("lovedOneId") String lovedOneId, HttpSession session) {
+    @GetMapping("/{lovedOneId}/resend")
+    public String resendInvite(@PathVariable("lovedOneId") String lovedOneId, HttpSession session, Model model) {
         // redirect to invite success??
-        return null;
+        // get user id from session
+        logger.info("lovedOneId from resend: {} " ,lovedOneId);
+        String userId = (String) session.getAttribute("userId");
+        String inviteToken = lovedOneService.resendInvite(userId, lovedOneId);
+        String inviteLink = lovedOneService.generateNewInviteLink(inviteToken);
+        model.addAttribute("inviteLink", inviteLink);
+
+        return "successAddLovedOne";
     }
 
     @GetMapping("/invite/success")
