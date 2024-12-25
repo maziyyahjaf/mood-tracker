@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.maziyyah.mood_tracker.constant.Constant;
 import com.example.maziyyah.mood_tracker.model.LovedOne;
+import com.example.maziyyah.mood_tracker.model.LovedOneDTO;
 import com.example.maziyyah.mood_tracker.repository.LovedOneRepository;
 
 @Service
@@ -66,7 +67,7 @@ public class LovedOneService {
         return Optional.of(addedLovedOnesId);
     }
 
-    public List<LovedOne> getAllLovedOnes(Optional<List<String>> lovedOnesId) {
+    public List<LovedOneDTO> getAllLovedOnes(Optional<List<String>> lovedOnesId) {
         // If the Optional is empty or contains an empty list, return an empty list
         return lovedOnesId.orElseGet(Collections::emptyList)
                 .stream()
@@ -82,45 +83,84 @@ public class LovedOneService {
                 .collect(Collectors.toList());
     }
 
-    public LovedOne getLovedOneData(String lovedOneId) {
+    public LovedOneDTO getLovedOneData(String lovedOneId) {
+        logger.info("Fetching data for lovedOneId: {}", lovedOneId);
+
         // Retrieve the hash data for the loved one
         Map<Object, Object> lovedOneHash = lovedOneRepository.getLovedOneData(lovedOneId);
         if (lovedOneHash == null || lovedOneHash.isEmpty()) {
+            logger.error("No data found for lovedOneId: {}", lovedOneId);
             throw new IllegalArgumentException("No data found for lovedOneId: " + lovedOneId);
         }
-
-        // Create and populate the LovedOne object
-        LovedOne lovedOne = new LovedOne();
-        lovedOne.setLoveOneId(getStringValue(lovedOneHash, "lovedOneId"));
+    
+        logger.debug("Data retrieved for lovedOneId: {}", lovedOneId);
+    
+        LovedOneDTO lovedOne = new LovedOneDTO();
+        lovedOne.setLovedOneId(getStringValue(lovedOneHash, "lovedOneId"));
         lovedOne.setName(getStringValue(lovedOneHash, "name"));
         lovedOne.setContact(getStringValue(lovedOneHash, "contact"));
         lovedOne.setRelationship(getStringValue(lovedOneHash, "relationship"));
-
-        // Check if Telegram chat ID is linked
+    
+        // Determine the status of the loved one
         String chatIdStr = getStringValue(lovedOneHash, Constant.LOVED_ONE_CHAT_ID_FIELD);
-        if (!chatIdStr.isEmpty()) {
-            lovedOne.setChatId(Long.parseLong(chatIdStr));
+        if (chatIdStr != null && !chatIdStr.isEmpty()) {
+            lovedOne.setStatus("Linked ✅");
+        } else {
+            lovedOne.setStatus(determineInviteStatus(lovedOneId));
         }
-
-        lovedOne.setTelegramStatus(getStringValue(lovedOneHash, "telegram_status"));
-
+    
+        logger.info("Successfully created LovedOneDTO for lovedOneId: {}", lovedOneId);
         return lovedOne;
     }
 
-    /**
-     * Utility method to safely retrieve a String value from a Map.
-     * 
-     * @param map The map to retrieve the value from.
-     * @param key The key for the desired value.
-     * @return The value as a String, or an empty string if the key is missing or
-     *         the value is null.
-     */
+    private String determineInviteStatus(String lovedOneId) {
+        logger.info("Determining invite status for lovedOneId: {}", lovedOneId);
+
+        // Retrieve the invite token for the loved one
+        Optional<String> inviteToken = getLovedOneIdInviteToken(lovedOneId);
+
+        if (inviteToken.isEmpty()) {
+            logger.warn("No invite token found for lovedOneId: {}", lovedOneId);
+            return "Not invited";
+        }
+
+        String inviteTokenString = inviteToken.get();
+        Map<Object, Object> inviteData = lovedOneRepository.getInviteData(inviteTokenString);
+
+        if (inviteData != null && !inviteData.isEmpty()) {
+            long expiresAt = safeParseLong(inviteData.get("expiresAt"));
+            if (System.currentTimeMillis() < expiresAt) {
+                logger.info("Invite for lovedOneId: {} is still valid", lovedOneId);
+                return "Waiting for Join";
+            } else {
+                logger.warn("Invite for lovedOneId: {} has expired", lovedOneId);
+                return "Invite Expired";
+            }
+        }
+
+        logger.error("Invite data for lovedOneId: {} is missing or corrupted", lovedOneId);
+        return "Not invited";
+    }
+
     private String getStringValue(Map<Object, Object> map, String key) {
         if (map == null) {
             return "";
         }
         Object value = map.get(key);
         return (value != null) ? value.toString() : "";
+    }
+
+    private long safeParseLong(Object value) {
+        try {
+            return value != null ? Long.parseLong(value.toString()) : 0L;
+        } catch (NumberFormatException e) {
+            return 0L;
+        }
+    }
+
+    public Optional<String> getLovedOneIdInviteToken(String lovedOneId) {
+        Object lovedOneIdInviteToken = lovedOneRepository.getLovedOneIdInviteToken(lovedOneId);
+        return Optional.ofNullable(lovedOneIdInviteToken).map(Object::toString);
     }
 
     public boolean hasLovedOneLinkedTelegramChatId(String lovedOneId) {

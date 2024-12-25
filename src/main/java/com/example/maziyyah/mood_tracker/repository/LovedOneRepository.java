@@ -34,7 +34,6 @@ public class LovedOneRepository {
         lovedOneData.put("name", lovedOne.getName());
         lovedOneData.put("contact", lovedOne.getContact());
         lovedOneData.put("relationship", lovedOne.getRelationship());
-        lovedOneData.put("telegram_status", "pending");
 
         Map<String, String> inviteData = new HashMap<>();
         inviteData.put("userId", userId);
@@ -79,6 +78,17 @@ public class LovedOneRepository {
         String lovedOneKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOneId;
         Map<Object, Object> lovedOneHash = template.opsForHash().entries(lovedOneKey);
         return lovedOneHash;
+    }
+
+    public Object getLovedOneIdInviteToken(String lovedOneId) {
+        String inviteTokenKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOneId + ":invite_token";
+        return template.opsForValue().get(inviteTokenKey);
+    }
+
+    public Map<Object, Object> getInviteData(String inviteToken) {
+        String inviteKey = Constant.INVITE_KEY_PREFIX + inviteToken;
+        Map<Object, Object> inviteDataHash = template.opsForHash().entries(inviteKey);
+        return inviteDataHash;
     }
 
     
