@@ -102,15 +102,15 @@ public class LovedOneController {
         String relationshipError = null;
 
         if (name.isEmpty() || name.length() < 2) {
-            nameError = "Name must be at least 2 characters";
+            nameError = "Please enter a name with at least 2 characters to continue.";
         }
 
         if (contact.isEmpty()) {
-            contactError = "Contact cannot be empty";
+            contactError = "It looks like the contact number is missing. Could you provide it to proceed?";
         }
 
         if (relationship.isEmpty()) {
-            relationshipError = "Relationship cannot be empty";
+            relationshipError = "We’d love to know your relationship with them. Could you fill this in?";
         }
 
         if (nameError != null || contactError != null || relationshipError != null) {

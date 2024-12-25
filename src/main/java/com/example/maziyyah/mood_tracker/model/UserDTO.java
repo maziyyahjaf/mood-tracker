@@ -5,19 +5,19 @@ import jakarta.validation.constraints.Size;
 
 public class UserDTO {
 
-    @NotEmpty(message = "Username cannot be empty")
-    @Size(min = 5, message = "Username must be at least 5 characters.")
+    @NotEmpty(message = "Please enter a username to continue.")
+    @Size(min = 5, message = "Your username needs at least 5 characters. Let’s make it memorable!")
     private String username;
 
-    @NotEmpty(message = "Name cannot be empty")
-    @Size(min = 3, message = "Name must be at least 3 characters.")
+    @NotEmpty(message = "We’d love to know your name. Could you fill it in?")
+    @Size(min = 3, message = "Your name needs at least 3 characters. Something short and sweet works!")
     private String name;
 
-    @NotEmpty(message = "Password cannot be empty")
-    @Size(min = 8, message = "Password must be at least 8 characters.")
+    @NotEmpty(message = "A password is required to keep your account secure.")
+    @Size(min = 8, message = "Your password should have at least 8 characters to stay strong.")
     private String password;
 
-    @NotEmpty(message = "Timezone cannot be empty")
+    @NotEmpty(message = "Please select a timezone to make sure everything runs smoothly.")
     private String timeZone;
 
     public String getUsername() {
