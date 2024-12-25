@@ -53,14 +53,16 @@ public class LovedOneController {
             @RequestParam("relationship") String relationship,
             HttpSession session, Model model) {
         
+        // add  manual validations?
+        if (!validateLovedOneInputs(name, contact, relationship, model)) {
+            return "addLovedOne";
+        }
         // get user id from session
         String userId = (String) session.getAttribute("userId");
         LovedOne lovedOne = new LovedOne(name, contact, relationship);
         lovedOneService.addLovedOne(userId, lovedOne);
         String inviteLink = lovedOneService.generateInviteLink(userId, lovedOne);
 
-        // Redirect to a page where the user sees the invite link
-        // return "redirect:/lovedones/invite/success?link=" + inviteLink;
         model.addAttribute("inviteLink", inviteLink);
         return "successAddLovedOne";
 
@@ -92,6 +94,32 @@ public class LovedOneController {
         // shareable link
         model.addAttribute("inviteLink", inviteLink);
         return "successAddLovedOne";
+    }
+
+    public boolean validateLovedOneInputs(String name, String contact, String relationship, Model model) {
+        String nameError = null;
+        String contactError = null;
+        String relationshipError = null;
+
+        if (name.isEmpty() || name.length() < 2) {
+            nameError = "Name must be at least 2 characters";
+        }
+
+        if (contact.isEmpty()) {
+            contactError = "Contact cannot be empty";
+        }
+
+        if (relationship.isEmpty()) {
+            relationshipError = "Relationship cannot be empty";
+        }
+
+        if (nameError != null || contactError != null || relationshipError != null) {
+            model.addAttribute("nameError", nameError);
+            model.addAttribute("contactError", contactError);
+            model.addAttribute("relationshipError", relationshipError);
+            return false;
+        }
+        return true;
     }
 
 }
