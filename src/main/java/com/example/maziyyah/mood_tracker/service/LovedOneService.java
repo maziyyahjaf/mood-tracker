@@ -49,6 +49,22 @@ public class LovedOneService {
         lovedOneRepository.addLovedOne(userId, lovedOne);
     }
 
+    public boolean removeLovedOne(String userId, String lovedOneId) {
+        return lovedOneRepository.removeLovedOne(userId, lovedOneId);
+    }
+
+    // invite token ttl?
+
+    // when i remove loved one..need to remove loved one data too
+    public void deleteLovedOneData(String userId, String lovedOneId) {
+        logger.info("Deleting loved one with id: {}", lovedOneId);
+        if (removeLovedOne(userId, lovedOneId)) {
+            lovedOneRepository.deleteLovedOneData(userId);
+            lovedOneRepository.deleteLovedOneInviteToken(lovedOneId);
+        }
+        logger.error("Error deleting loved one with id: {}", lovedOneId);
+    }
+
     public Optional<List<String>> getAllAddedLovedOnesId(String userId) {
         // Retrieve the set of loved ones IDs from the repository
         Set<Object> lovedOnesIdObjs = lovedOneRepository.getAllLovedOnes(userId);
@@ -92,15 +108,15 @@ public class LovedOneService {
             logger.error("No data found for lovedOneId: {}", lovedOneId);
             throw new IllegalArgumentException("No data found for lovedOneId: " + lovedOneId);
         }
-    
+
         logger.debug("Data retrieved for lovedOneId: {}", lovedOneId);
-    
+
         LovedOneDTO lovedOne = new LovedOneDTO();
         lovedOne.setLovedOneId(getStringValue(lovedOneHash, "lovedOneId"));
         lovedOne.setName(getStringValue(lovedOneHash, "name"));
         lovedOne.setContact(getStringValue(lovedOneHash, "contact"));
         lovedOne.setRelationship(getStringValue(lovedOneHash, "relationship"));
-    
+
         // Determine the status of the loved one
         String chatIdStr = getStringValue(lovedOneHash, Constant.LOVED_ONE_CHAT_ID_FIELD);
         if (chatIdStr != null && !chatIdStr.isEmpty()) {
@@ -108,7 +124,7 @@ public class LovedOneService {
         } else {
             lovedOne.setStatus(determineInviteStatus(lovedOneId));
         }
-    
+
         logger.info("Successfully created LovedOneDTO for lovedOneId: {}", lovedOneId);
         return lovedOne;
     }
@@ -140,6 +156,37 @@ public class LovedOneService {
 
         logger.error("Invite data for lovedOneId: {} is missing or corrupted", lovedOneId);
         return "Not invited";
+    }
+
+    public String resendInvite(String userId, String lovedOneId) {
+        // Retrieve the invite token for the loved one
+        Optional<String> inviteToken = getLovedOneIdInviteToken(lovedOneId);
+        if (inviteToken.isPresent()) {
+            String inviteTokenString = inviteToken.get();
+            Map<Object, Object> inviteData = lovedOneRepository.getInviteData(inviteTokenString);
+            if (inviteData != null && !inviteData.isEmpty()) {
+                long expiresAt = safeParseLong(inviteData.get("expiresAt"));
+                if (System.currentTimeMillis() < expiresAt) {
+                    // invite token is still valid, reuse it
+                    // Log token reuse
+                    logger.info("Reusing valid invite token for lovedOneId: {}", lovedOneId);
+                    return inviteTokenString;
+                }
+            }
+        }
+
+        // generate and log new token
+        return generateNewInviteToken(userId, lovedOneId);
+        
+        
+    }
+
+    private String generateNewInviteToken(String userId, String lovedOneId) {
+        String newInviteToken = generateInviteToken();
+        lovedOneRepository.generateNewInviteLink(userId, lovedOneId, newInviteToken);
+        // Log token generation
+        logger.info("Generated new invite token for lovedOneId: {}", lovedOneId);
+        return newInviteToken;
     }
 
     private String getStringValue(Map<Object, Object> map, String key) {

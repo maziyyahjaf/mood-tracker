@@ -45,17 +45,43 @@ public class LovedOneRepository {
         template.opsForValue().set(inviteTokenKey, inviteToken);
     }
 
+    public void generateNewInviteLink(String userId, String lovedOneId, String newInviteToken) {
+        String inviteKey = Constant.INVITE_KEY_PREFIX + newInviteToken;
+        String inviteTokenKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOneId + ":invite_token";
+
+        Map<String, String> inviteData = new HashMap<>();
+        inviteData.put("userId", userId);
+        inviteData.put("lovedOneId", lovedOneId);
+        inviteData.put("expiresAt", String.valueOf(Instant.now().plusSeconds(604800).toEpochMilli())); // 7 day expiry
+
+        template.opsForHash().putAll(inviteKey, inviteData);
+        template.opsForValue().set(inviteTokenKey, newInviteToken);
+
+    }
+
     public void addLovedOne(String userId, LovedOne lovedOne) {
         String lovedOneId = lovedOne.getLoveOneId();
         String userLovedOnesKey = Constant.USER_KEY_PREFIX + userId + ":loved_ones";
         template.opsForSet().add(userLovedOnesKey, lovedOneId);
     }
 
-    public void removeLovedOne(String userId, LovedOne lovedOne) {
-        String lovedOneId = lovedOne.getLoveOneId();
+    public boolean removeLovedOne(String userId, String lovedOneId) {
         String userLovedOnesKey = Constant.USER_KEY_PREFIX + userId + ":loved_ones";
-        template.opsForSet().remove(userLovedOnesKey, lovedOneId);
+        if (template.opsForSet().remove(userLovedOnesKey, lovedOneId) > 0) {
+            return true;
+        }
+        return false;
 
+    }
+
+    public void deleteLovedOneData(String userId) {
+        String lovedOneKey = Constant.LOVED_ONE_KEY_PREFIX + userId;
+        template.delete(lovedOneKey);
+    }
+
+    public void deleteLovedOneInviteToken(String lovedOneId) {
+        String inviteTokenKey = Constant.LOVED_ONE_KEY_PREFIX + lovedOneId + ":invite_token";
+        template.delete(inviteTokenKey);
     }
 
     public Set<Object> getAllLovedOnes(String userId) {
