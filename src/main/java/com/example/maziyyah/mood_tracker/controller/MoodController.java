@@ -102,7 +102,7 @@ public class MoodController {
         model.addAttribute("dailyInsights", dailyInsights);
         model.addAttribute("currentDate", currentDate);
 
-        return "moodDashboard3";
+        return "moodDashboard4";
     }
 
     @GetMapping("/log")
@@ -182,13 +182,7 @@ public class MoodController {
         model.addAttribute("date", date);
         model.addAttribute("moodEntries", moodEntries);
         model.addAttribute("epochDay", epochDay);
-        return "dailyView";
-    }
-
-    @GetMapping("/tileview/{epochDay}")
-    public String viewDailyViewTile(@PathVariable("epochDay") long epochDay, Model model) {
-        model.addAttribute("epochDay", epochDay);
-        return "dailyViewTile";
+        return "dailyView2";
     }
 
     @GetMapping("/weeklyview")

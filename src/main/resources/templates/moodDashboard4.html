@@ -23,7 +23,6 @@
         /* Body Styling */
         body {
             background-color: #f7f9fc;
-            /* background: linear-gradient(to bottom right, hsl(205, 100%, 82%), hsl(39, 100%, 90%)); */
             color: #333;
             display: flex;
             flex-direction: column;
@@ -52,11 +51,19 @@
             font-weight: 600;
             padding: 10px 20px;
             border-radius: 20px;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-item i {
+            margin-right: 8px;
+            font-size: 1.2rem;
         }
 
         .nav-item:hover {
             background-color: #c9d6e7;
+            transform: scale(1.05);
         }
 
         /* Dashboard */
@@ -97,41 +104,37 @@
         }
 
         /* Log Button */
-        .log-button .button{
-            /* margin-top: 10px; Adds spacing above the button */
-            display: inline-block;
-        }
-
-
         .log-button .button {
+            display: inline-block;
             background-color: #4a90e2;
             color: white;
             border: none;
             border-radius: 25px;
-            padding: 15px 30px;
-            font-size: 1.1rem;
+            padding: 15px 30px; /* Increased padding */
+            font-size: 1.25rem; /* Increased font size */
             font-weight: 600;
             text-decoration: none;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
+            /* margin-top: 30px;  Added extra spacing above */
         }
 
         .log-button .button:hover {
             background-color: #357ac9;
-            transform: scale(1.05);
+            transform: scale(1.1); /* Slightly larger hover scale */
         }
 
         /* Focus State for Accessibility */
         .log-button .button:focus {
             outline: none;
-            box-shadow: 0 0 5px #4a90e2;
+            box-shadow: 0 0 8px #4a90e2;
         }
 
         /* Responsive Styling */
         @media (max-width: 768px) {
             .log-button .button {
-                padding: 10px 20px;
-                font-size: 0.9rem;
+                padding: 15px 30px;
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -139,11 +142,11 @@
 
 <body>
     <div class="navbar">
-        <a th:href="@{/profile/settings}" class="nav-item">Profile Settings</a>
-        <a th:href="@{/lovedones}" class="nav-item">Loved Ones</a>
-        <a th:href="@{/moods/weeklyview}" class="nav-item">Weekly View</a>
+        <a th:href="@{/profile/settings}" class="nav-item"><i class="material-icons">settings</i>Profile Settings</a>
+        <a th:href="@{/lovedones}" class="nav-item"><i class="material-icons">favorite</i>Loved Ones</a>
+        <a th:href="@{/moods/weeklyview}" class="nav-item"><i class="material-icons">calendar_today</i>Weekly View</a>
         <form th:action="@{/moods/logout}" method="POST" style="display: inline;">
-                <button type="submit" class="nav-item">Logout</button>
+            <button type="submit" class="nav-item"><i class="material-icons">logout</i>Logout</button>
         </form>
     </div>
 

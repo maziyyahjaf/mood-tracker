@@ -68,7 +68,7 @@ public class UserController {
             // need to add error attribute in page
             // should differentiate if username or password is incorrect?
             model.addAttribute("error", "Username and/or password is incorrect.");
-            return "userLogin";
+            return "userLogin3";
         }
 
         // Invalidate old session and creat a new one to avoid session fixation attacks
