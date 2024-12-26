@@ -128,6 +128,8 @@ public class MoodTrackerService {
     public List<DailyMoodSummary> getWeeklySummary(String userId) {
         long todayEpochDay = LocalDate.now().toEpochDay();
         List<DailyMoodSummary> weeklySummaries = new ArrayList<>();
+        
+        logger.debug("Generating weekly summary for user {} starting from epochDay {}", userId, todayEpochDay - 6);
 
         for (long epochDay = todayEpochDay - 6; epochDay <= todayEpochDay; epochDay++) {
             getDailyMoodSummary(userId, epochDay).ifPresent(weeklySummaries::add);
@@ -139,17 +141,18 @@ public class MoodTrackerService {
         Object dailySummaryObject = moodTrackerRepository.getDailySummaryLog(userId, epochDay);
 
         if (dailySummaryObject == null) {
-            logger.warn("No daily summary for user {} on epochDay {}", userId, epochDay);
-            // System.out.println("No daily summary found for user " + userId + " on epochDay " + epochDay);
+            // logger.warn("No daily summary for user {} on epochDay {}", userId, epochDay);
+            System.out.println("No daily summary found for user " + userId + " on epochDay " + epochDay);
             return Optional.empty(); // no data, so return an empty Optional
         }
 
         try (JsonReader jsonReader = Json.createReader(new StringReader(dailySummaryObject.toString()))) {
             JsonObject jsonObject = jsonReader.readObject();
             DailyMoodSummary dailyMoodSummary = toDailyMoodSummary(jsonObject);
+            logger.info("Parsed daily summary for epochDay {}: {}", epochDay, dailyMoodSummary);
             return Optional.of(dailyMoodSummary);
         } catch (Exception e) {
-            logger.error("Error parsing daily summary for user {} on epochDay {}:", userId, epochDay, e);
+            logger.error("Error parsing daily summary for user {} on epochDay {}:", userId, epochDay, e.getMessage(), e);
             // System.err.println("Error parsing daily summary for user " + userId + " on epochDay " + epochDay + ": "
             //         + e.getMessage());
             // e.printStackTrace();

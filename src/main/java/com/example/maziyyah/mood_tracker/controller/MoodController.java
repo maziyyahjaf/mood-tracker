@@ -198,7 +198,7 @@ public class MoodController {
 
         // get the last 7 days' summaries
         List<DailyMoodSummary> weeklySummaries = moodTrackerService.getWeeklySummary(userId);
-
+        System.out.println("number of summaries available: " + weeklySummaries.size());
         for (DailyMoodSummary summary : weeklySummaries) {
             summary.setEmoji(MoodEmoji.getEmojiFor(summary.getAverageMoodScore()));
         }
