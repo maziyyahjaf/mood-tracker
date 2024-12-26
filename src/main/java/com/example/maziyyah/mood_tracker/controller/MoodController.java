@@ -102,7 +102,7 @@ public class MoodController {
         model.addAttribute("dailyInsights", dailyInsights);
         model.addAttribute("currentDate", currentDate);
 
-        return "moodDashboard";
+        return "moodDashboard3";
     }
 
     @GetMapping("/log")
@@ -205,6 +205,12 @@ public class MoodController {
 
         model.addAttribute("weeklySummaries", weeklySummaries);
         return "weeklyView";
+    }
+
+    @PostMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login?logout=true";
     }
 
 }

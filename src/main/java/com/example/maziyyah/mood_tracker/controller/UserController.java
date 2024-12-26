@@ -2,6 +2,7 @@ package com.example.maziyyah.mood_tracker.controller;
 
 import java.time.ZoneId;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -35,8 +36,26 @@ public class UserController {
     }
 
     @GetMapping(path = { "/", "login" })
-    public String showLoginPage() {
-        return "userLogin";
+    public String showLoginPage(@RequestParam(name = "logout", required = false) String logout, Model model) {
+        Random random = new Random();
+        String logoutMessage;
+
+        if ("true".equals(logout)) {
+            String[] message = {
+                "You’re logged out! Take care and check back soon to log how you’re feeling—we’re here for you.",
+                "All set! Don’t forget to come back and share how your day is going. Your next mood check is waiting.",
+                "Logged out and ready to go! Remember, logging your mood is just a click away—we can’t wait to hear from you.",
+                "Signed out successfully! Keep checking in with us—your next mood log matters.",
+                "Goodbye for now! Don’t forget to swing by again soon to track how you’re feeling.",
+                "You’re signed out! Your moods matter, and we can’t wait to hear from you again.",
+                "Logged out, but don’t stay away too long! Your next entry is waiting whenever you are.",
+                "You’re all set! Stay mindful, and check back soon to keep tracking your mood journey."
+            };
+            logoutMessage = message[random.nextInt(message.length)];
+            model.addAttribute("logoutMessage", logoutMessage);
+
+        }        
+        return "userLogin3";
     }
 
     @PostMapping("/login")
