@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.maziyyah.mood_tracker.model.DailyMoodSummary;
 import com.example.maziyyah.mood_tracker.model.MoodEmoji;
 import com.example.maziyyah.mood_tracker.model.MoodEntryView;
-import com.example.maziyyah.mood_tracker.model.MoodInsights;
 import com.example.maziyyah.mood_tracker.service.MoodTrackerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -96,8 +95,7 @@ public class MoodController {
         LocalDate currentDate = LocalDate.now(userZone);
         long epochDay = currentDate.toEpochDay();
 
-        // Fetch daily insights
-        // MoodInsights dailyInsights = moodTrackerService.getDailyInsights(userId, epochDay);
+        // Fetch DailyMoodSummary instead of MoodInsights
         DailyMoodSummary dailyInsights = moodTrackerService.getDailyMoodSummary(userId, epochDay)
                                             .orElse(new DailyMoodSummary());
         dailyInsights.setEmoji(MoodEmoji.getEmojiFor(dailyInsights.getAverageMoodScore()));
