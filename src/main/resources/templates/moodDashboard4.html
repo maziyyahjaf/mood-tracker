@@ -82,6 +82,9 @@
             font-weight: 600;
             color: #4a90e2;
             margin-bottom: 20px;
+            line-height: 1.4; /* Ensures proper spacing for multi-line text */
+            word-wrap: break-word; /* Ensures long words break gracefully */
+            overflow-wrap: break-word; /* Ensures compatibility with all browsers */
         }
 
         /* Mood Summary */
@@ -136,6 +139,9 @@
                 padding: 15px 30px;
                 font-size: 1.2rem;
             }
+            .welcome-message {
+                font-size: 1.8rem; /* Adjust for smaller screens */
+            }
         }
     </style>
 </head>
@@ -155,12 +161,12 @@
             <h1 th:text="${greeting}"></h1>
         </div>
         <div class="mood-summary">
-            <span th:if="${dailyInsights.totalEntries > 0}">
+            <span th:if="${dailyInsights.numOfMoodEntries > 0}">
                 <p>
-                    You've logged <strong><span th:text="${dailyInsights.totalEntries}"></span> entries</strong> today.
+                    You've logged <strong><span th:text="${dailyInsights.numOfMoodEntries}"></span> entries</strong> today.
                 </p>
             </span>
-            <span th:if="${dailyInsights.totalEntries == 0}">
+            <span th:if="${dailyInsights.numOfMoodEntries == 0}">
                 <p>
                     No mood entries logged yet.
                 </p>
@@ -168,10 +174,10 @@
                     Ready to check in with yourself today?
                 </p>
             </span>
-            <span th:if="${dailyInsights.totalEntries > 0}">
+            <span th:if="${dailyInsights.numOfMoodEntries > 0}">
                 <p>
                     Lately, you've been feeling <strong><span
-                            th:text="${dailyInsights.mostCommonMoodEmoji[0]}"></span></strong>.
+                            th:text="${dailyInsights.emoji}"></span></strong>.
                 </p>
             </span>
         </div>

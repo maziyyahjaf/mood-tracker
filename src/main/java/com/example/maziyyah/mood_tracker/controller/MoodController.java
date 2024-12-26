@@ -97,7 +97,10 @@ public class MoodController {
         long epochDay = currentDate.toEpochDay();
 
         // Fetch daily insights
-        MoodInsights dailyInsights = moodTrackerService.getDailyInsights(userId, epochDay);
+        // MoodInsights dailyInsights = moodTrackerService.getDailyInsights(userId, epochDay);
+        DailyMoodSummary dailyInsights = moodTrackerService.getDailyMoodSummary(userId, epochDay)
+                                            .orElse(new DailyMoodSummary());
+        dailyInsights.setEmoji(MoodEmoji.getEmojiFor(dailyInsights.getAverageMoodScore()));
         // Pass insights to the model
         model.addAttribute("dailyInsights", dailyInsights);
         model.addAttribute("currentDate", currentDate);

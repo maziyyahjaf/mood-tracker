@@ -6,7 +6,7 @@ public class DailyMoodSummary {
     
     private Long epochDay; // the day the summary correspons to
     private double averageMoodScore; // average mood score for the day
-    private int numOfMoodEntries; // number of entries for that day
+    private int numOfMoodEntries = 0; // number of entries for that day, default to zero
     private String summaryColor; // summary color of the day
     private LocalDate date; // human readable date
     private String emoji;
