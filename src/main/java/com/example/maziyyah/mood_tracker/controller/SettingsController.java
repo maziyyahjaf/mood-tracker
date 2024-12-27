@@ -60,6 +60,7 @@ public class SettingsController {
             HttpSession session) {
 
         System.out.println("Original Username: " + originalUsername);
+        System.out.println("Updated bad day alert threshold: " + entity.getAlertThreshold());
         String userId = (String) session.getAttribute("userId");
         
         if (userId == null) {
