@@ -34,7 +34,6 @@ public class JobProcesser {
             if (userId != null) {
                 encouragementMessageService.generateAndSaveMessage(userId);
                 requestTracker.increment();
-
                 // Enqueue to notificationQueue for NotificationSender
                 template.opsForList().rightPush("notificationQueue", userId);
             }
