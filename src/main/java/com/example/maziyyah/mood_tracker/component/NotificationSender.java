@@ -48,6 +48,7 @@ public class NotificationSender {
             // Send the message if available
             if (encouragementMessage != null) {
                 telegramNotificationService.sendScheduledEncouragementMessage(userId, encouragementMessage);
+                logger.info("Sent encouragement message to user {}", userId);
             } else {
                 logger.warn("No precomputed message found for user {}.", userId);
             }
