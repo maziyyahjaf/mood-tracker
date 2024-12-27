@@ -59,6 +59,7 @@ public class SettingsController {
             HttpSession session) {
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
             return "profileSettings"; // Return with validation errors
         }
 
@@ -72,6 +73,7 @@ public class SettingsController {
             // perform "username already exists" check
             if (!userService.updateUsername(originalUsername, entity.getUsername())) {
                 bindingResult.rejectValue("username", "error.username", "This username is already taken.");
+                model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
                 return "profileSettings";
             }
         }
