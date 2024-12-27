@@ -8,7 +8,6 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.example.maziyyah.mood_tracker.util.Utils;
@@ -63,17 +62,15 @@ public class RedisConfig {
 
     @Bean
     @Qualifier(Utils.template02) // for using with Objects
-    public RedisTemplate<String, Object> template02(JedisConnectionFactory jcf) {
+    public RedisTemplate<String, String> template02(JedisConnectionFactory jcf) {
         
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(jcf);
         
         // Use StringRedisSerializer for key serialization
         template.setKeySerializer(new StringRedisSerializer());
-
-        // Use Jackson2JsonRedisSerializer for value serialization
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-        template.setValueSerializer(serializer);
+        // Use StringRedisSerializer for value serialization
+        template.setValueSerializer(new StringRedisSerializer());
 
         return template;
     }

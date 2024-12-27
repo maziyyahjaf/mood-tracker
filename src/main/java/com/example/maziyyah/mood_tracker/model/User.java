@@ -1,5 +1,6 @@
 package com.example.maziyyah.mood_tracker.model;
 
+import java.time.LocalTime;
 import java.util.UUID;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +17,7 @@ public class User {
     private int alertThreshold; // number of bad days before loved ones are notified (optional)
     private boolean encouragementOptIn; // whether the user opts in for surprise encouragements (optional)
     private String timeZone;
+    private LocalTime notificationTime;
 
     
 
@@ -31,6 +33,7 @@ public class User {
         this.timeZone = timeZone;
         this.alertThreshold = 3; // default threshold (if applicable)
         this.encouragementOptIn = true; // default opt-in for encouragements;
+        this.notificationTime = LocalTime.of(8,0); // default to 8:00 am;
 
     }
 
@@ -114,6 +117,17 @@ public class User {
         this.timeZone = timeZone;
     }
 
+
+    public LocalTime getNotificationTime() {
+        return notificationTime;
+    }
+
+
+    public void setNotificationTime(LocalTime notificationTime) {
+        this.notificationTime = notificationTime;
+    }
+
+    
     
 
     

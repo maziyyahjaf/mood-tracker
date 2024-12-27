@@ -97,7 +97,7 @@ public class MoodController {
 
         // Fetch DailyMoodSummary instead of MoodInsights
         DailyMoodSummary dailyInsights = moodTrackerService.getDailyMoodSummary(userId, epochDay)
-                                            .orElse(new DailyMoodSummary());
+                .orElse(new DailyMoodSummary());
         dailyInsights.setEmoji(MoodEmoji.getEmojiFor(dailyInsights.getAverageMoodScore()));
         // Pass insights to the model
         model.addAttribute("dailyInsights", dailyInsights);
@@ -191,15 +191,23 @@ public class MoodController {
         // get user id from session
         String userId = (String) session.getAttribute("userId");
 
+        // Fetch the user's time zone
+        String userTimeZone = moodTrackerService.getUserTimeZone(userId);
+        ZoneId userZone = ZoneId.of(userTimeZone);
+
+        // Determine the current epoch day based on user's time zone
+        LocalDate currentDate = LocalDate.now(userZone);
+        long epochDay = currentDate.toEpochDay();
+
         // get the last 7 days' summaries
-        List<DailyMoodSummary> weeklySummaries = moodTrackerService.getWeeklySummary(userId);
+        List<DailyMoodSummary> weeklySummaries = moodTrackerService.getWeeklySummary(userId, epochDay);
         System.out.println("number of summaries available: " + weeklySummaries.size());
         for (DailyMoodSummary summary : weeklySummaries) {
             summary.setEmoji(MoodEmoji.getEmojiFor(summary.getAverageMoodScore()));
         }
 
         model.addAttribute("weeklySummaries", weeklySummaries);
-        return "weeklyView";
+        return "weeklyView3";
     }
 
     @PostMapping("/logout")

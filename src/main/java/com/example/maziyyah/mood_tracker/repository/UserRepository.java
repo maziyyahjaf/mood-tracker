@@ -2,6 +2,7 @@ package com.example.maziyyah.mood_tracker.repository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -42,8 +43,10 @@ public class UserRepository {
         userHash.put("alertThreshold", String.valueOf(user.getAlertThreshold()));
         userHash.put("encouragementOptIn", String.valueOf(user.isEncouragementOptIn()));
         userHash.put("timeZone", user.getTimeZone());
+        userHash.put("notificationTime", user.getNotificationTime().toString());
 
         template.opsForHash().putAll(userKey, userHash);
+        template.opsForSet().add(Constant.USER_REDIS_KEY_LIST, userKey);
         template.opsForValue().set(usernameKey, user.getUserId()); // Save the mapping of username -> userId
         template.opsForHash().put(Constant.linkingCodes, linkingCode, user.getUserId());
         return true;
@@ -133,6 +136,17 @@ public class UserRepository {
 
         return true;
 
+    }
+
+    public Set<Object> getAllUsersRedisKey() {
+        // fetch all user keys
+        Set<Object> userKeys = template.opsForSet().members(Constant.USER_REDIS_KEY_LIST);
+
+        return userKeys;
+    }
+
+    public Map<Object, Object> getUserData(String userRedisKey) {
+        return template.opsForHash().entries(userRedisKey);
     }
 
   

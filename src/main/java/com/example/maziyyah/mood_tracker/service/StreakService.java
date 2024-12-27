@@ -51,6 +51,8 @@ public class StreakService {
             System.out.println("Streak reset to: " + currentStreak);
         }
 
+        // should put the if(encourageOptIn(userId)) method here
+
         streakRepository.updateStreakCount(userId, currentStreak, epochDay);
 
         Integer alertThreshold = getUserAlertThreshold(userId);

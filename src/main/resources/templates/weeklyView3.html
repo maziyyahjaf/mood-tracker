@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
+        /* General Styling */
         body {
             background: linear-gradient(180deg, #f6f9fc, #eaf6f8);
             font-family: 'Poppins', sans-serif;
@@ -25,24 +26,25 @@
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            color: #ff6f61; /* Friendly coral tone */
+            color: #4a90e2; /* Calming blue */
             margin-bottom: 1.5rem;
             text-align: center;
         }
 
+        /* Button Styling */
         .btn-secondary {
             border-radius: 50px;
             padding: 0.5rem 1.5rem;
             background-color: #f3f4f6;
-            color: #ff6f61;
+            color: #4a90e2;
             border: none;
             transition: all 0.3s ease-in-out;
         }
 
         .btn-secondary:hover {
-            background-color: #ff6f61;
+            background-color: #4a90e2;
             color: white;
             transform: scale(1.05);
         }
@@ -51,28 +53,30 @@
             background-color: #ffa726;
             border: none;
             border-radius: 50px;
-            padding: 0.5rem 1.5rem;
+            padding: 0.75rem 2rem;
             color: white;
             font-weight: 600;
             transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .btn-primary:hover {
             background-color: #fb8c00;
-            transform: scale(1.05);
+            transform: translateY(-2px);
         }
 
+        /* Tile Styling */
         .tile {
             height: 130px;
             border-radius: 20px;
             color: #ffffff;
-            font-weight: bold;
             text-align: center;
             padding: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* background: linear-gradient(135deg, #4a90e2, #73b9ee); */
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
@@ -82,31 +86,37 @@
         }
 
         .tile-date {
-            font-size: clamp(1.2rem, 2vw, 1.5rem); /* Min: 1rem, Preferred: 2vw, Max: 1.5rem */
+            font-size: clamp(1.3rem, 2vw, 1.8rem);
             font-weight: 500;
             margin-bottom: 5px;
         }
 
         .tile-score {
-            font-size: clamp(1.7rem, 3vw, 2.5rem); /* Min: 1.5rem, Preferred: 3vw, Max: 2.5rem */
+            font-size: clamp(2rem, 3vw, 2.8rem);
         }
 
+        /* Empty State */
         .empty-state {
             text-align: center;
             margin-top: 3rem;
+            padding: 1rem;
+            border-radius: 15px;
+            background: #fefefe;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .empty-state img {
-            max-width: 150px;
+            max-width: 120px;
             margin-bottom: 1rem;
         }
 
         .empty-state p {
             color: #7f8c8d;
-            font-size: 1rem;
+            font-size: 1.1rem;
             margin-bottom: 1rem;
         }
 
+        /* Responsive Tiles */
         @media (max-width: 768px) {
             .tile {
                 height: 110px;
@@ -137,7 +147,7 @@
         <!-- Empty State -->
         <div class="empty-state" th:if="${#lists.isEmpty(weeklySummaries)}">
             <!-- <img src="/assets/images/empty-state.svg" alt="No moods logged" /> -->
-            <p>It looks like you haven’t logged any moods this week. Start tracking to see them here!</p>
+            <p>It looks like you haven’t logged any moods this week. Why not start today?</p>
             <a href="/moods/log" class="btn btn-primary mt-3">Log Your Mood</a>
         </div>
 
@@ -162,3 +172,4 @@
 </body>
 
 </html>
+

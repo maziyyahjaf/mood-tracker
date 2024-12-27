@@ -125,8 +125,7 @@ public class MoodTrackerService {
         return moodEntries;
     }
 
-    public List<DailyMoodSummary> getWeeklySummary(String userId) {
-        long todayEpochDay = LocalDate.now().toEpochDay();
+    public List<DailyMoodSummary> getWeeklySummary(String userId, long todayEpochDay) {
         List<DailyMoodSummary> weeklySummaries = new ArrayList<>();
         
         logger.debug("Generating weekly summary for user {} starting from epochDay {}", userId, todayEpochDay - 6);
