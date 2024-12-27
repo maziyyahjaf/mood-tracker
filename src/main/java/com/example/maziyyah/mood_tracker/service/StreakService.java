@@ -40,9 +40,9 @@ public class StreakService {
             currentStreak += 1;
             // call the TelegramNotificationService -> encouragement
             // check if encouragement opt in is true
-            if (encouragementOptIn(userId)) {
-                telegramNotificationService.sendEncouragementMessage(userId, epochDay);
-            }
+            // if (encouragementOptIn(userId)) {
+            //     telegramNotificationService.sendEncouragementMessage(userId, epochDay);
+            // }
             System.out.println("Bad Day streak increase to: " + currentStreak);
         } else {
             // good day: reset streak
@@ -50,8 +50,6 @@ public class StreakService {
             // send "good" encouragement message?
             System.out.println("Streak reset to: " + currentStreak);
         }
-
-        // should put the if(encourageOptIn(userId)) method here
 
         streakRepository.updateStreakCount(userId, currentStreak, epochDay);
 
