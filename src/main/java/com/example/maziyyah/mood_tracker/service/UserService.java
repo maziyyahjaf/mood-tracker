@@ -109,6 +109,7 @@ public class UserService {
 
         ZonedDateTime nowUTC = ZonedDateTime.now(ZoneId.of("UTC")); // current time in UTC
         return allUsers.stream()
+                .filter(user -> user.isEncouragementOptIn())
                 .filter(user -> isNotificationDue(user, nowUTC))
                 .collect(Collectors.toList());
     }
