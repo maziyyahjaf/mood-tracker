@@ -13,7 +13,7 @@ public class RedisJobQueue {
     @Qualifier(Utils.template02)
     private final RedisTemplate<String, String> template;
 
-    public RedisJobQueue(RedisTemplate<String, String> template) {
+    public RedisJobQueue(@Qualifier(Utils.template02) RedisTemplate<String, String> template) {
         this.template = template;
     }
 

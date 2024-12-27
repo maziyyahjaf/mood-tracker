@@ -20,5 +20,9 @@ public class Constant {
 
     public static final String QUEUE_KEY = "encouragement_job_queue";
     public static final int LLM_REQUEST_DAILY_LIMIT = 50;
+    public static final String SAVED_ENCOURAGEMENT_MESSAGE_KEY = "encouragement:";
+    public static final int MOOD_ENTRY_PROMPT_LIMIT = 5;
+
+    
     
 }

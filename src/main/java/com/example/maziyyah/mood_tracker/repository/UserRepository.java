@@ -18,12 +18,15 @@ public class UserRepository {
 
     @Qualifier(Utils.template01)
     private final RedisTemplate<String, Object> template;
+    @Qualifier(Utils.template02)
+    private final RedisTemplate<String, String> template2;
     private final PasswordEncoder passwordEncoder;
 
     public UserRepository(@Qualifier(Utils.template01) RedisTemplate<String, Object> template,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder, @Qualifier(Utils.template02) RedisTemplate<String, String> template2 ) {
         this.template = template;
         this.passwordEncoder = passwordEncoder;
+        this.template2 = template2;
     }
 
     public Boolean addUser(User user, String linkingCode) {
@@ -138,9 +141,9 @@ public class UserRepository {
 
     }
 
-    public Set<Object> getAllUsersRedisKey() {
+    public Set<String> getAllUsersRedisKey() {
         // fetch all user keys
-        Set<Object> userKeys = template.opsForSet().members(Constant.USER_REDIS_KEY_LIST);
+        Set<String> userKeys = template2.opsForSet().members(Constant.USER_REDIS_KEY_LIST);
 
         return userKeys;
     }

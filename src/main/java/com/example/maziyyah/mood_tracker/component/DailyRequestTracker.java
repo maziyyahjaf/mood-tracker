@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.stereotype.Component;
 
-import com.example.maziyyah.mood_tracker.constant.Constant;
 
 @Component
 public class DailyRequestTracker {
@@ -16,8 +15,8 @@ public class DailyRequestTracker {
     }
 
     // increment the counter
-    public int increment() {
-        return requestCount.incrementAndGet();
+    public void increment() {
+        requestCount.incrementAndGet();
     }
 
     // reset the counter
@@ -25,8 +24,4 @@ public class DailyRequestTracker {
         requestCount.set(0);
     }
 
-    // check if the limit is reached
-    public boolean isLimitReached() {
-        return requestCount.get() >= Constant.LLM_REQUEST_DAILY_LIMIT;
-    }
 }
