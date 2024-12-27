@@ -48,9 +48,9 @@ public class EncouragementMessageService {
         // get user time zone
         String timeZone = user.getTimeZone();
         LocalDate yesterday = ZonedDateTime.now(ZoneId.of(timeZone)).toLocalDate().minusDays(1);
-        LocalDate currentDate = ZonedDateTime.now(ZoneId.of(timeZone)).toLocalDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // only Local Date! dont have time information
-        String currentDateString = currentDate.format(formatter);
+        LocalDateTime currentDateTime = ZonedDateTime.now(ZoneId.of(timeZone)).toLocalDateTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String currentDateString = currentDateTime.format(formatter);
 
         // determine yesterday epoch day
         long yesterdayEpochDay = yesterday.toEpochDay();
