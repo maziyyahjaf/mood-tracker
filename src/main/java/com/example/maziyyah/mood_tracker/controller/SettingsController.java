@@ -46,6 +46,7 @@ public class SettingsController {
         dto.setTimeZone(user.getTimeZone());
 
         model.addAttribute("profileUpdateDTO", dto);
+        model.addAttribute("originalUsername", user.getUsername());
         model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
 
         return "profileSettings";
@@ -58,6 +59,7 @@ public class SettingsController {
             Model model,
             HttpSession session) {
 
+        System.out.println("Original Username: " + originalUsername);
         String userId = (String) session.getAttribute("userId");
         
         if (userId == null) {

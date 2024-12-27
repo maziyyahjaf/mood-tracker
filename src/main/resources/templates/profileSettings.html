@@ -106,7 +106,7 @@
                 <label for="username">Username</label>
                 <input type="text" id="username" class="form-control" th:field="*{username}">
                 <!-- Hidden input to store the original username -->
-                <input type="hidden" name="originalUsername" th:value="*{username}" />
+                <input type="hidden" name="originalUsername" th:value="${originalUsername}"/>
                 <div class="alert alert-danger mt-1" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
                 </div>
             </div>
