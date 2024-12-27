@@ -83,6 +83,27 @@ public class TelegramNotificationService {
 
     }
 
+    public void sendScheduledEncouragementMessage(String userId, String message) {
+        Optional<String> userChatIdOpt = getUserChatId(userId);
+        if (userChatIdOpt.isEmpty()) {
+            logger.warn("Cannot send message because user {} has no Telegram chat ID linked.", userId);
+            return;
+        }
+
+        // Prepare the Telegram API request
+        String userChatId = userChatIdOpt.get();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/json");
+
+        JsonObject jsonObject = Json.createObjectBuilder()
+                .add("chat_id", userChatId)
+                .add("text", message)
+                .build();
+
+        sendTelegramNotificationRequest(jsonObject);
+
+    }
+
     public void sendNotificationToLovedOnes(String userId, int currentStreak) {
 
         Optional<List<String>> lovedOnesIdsOpt = getAllLovedOnes(userId);

@@ -124,4 +124,8 @@ public class EncouragementMessageService {
         encouragementMessageRepo.saveMessageToRedis(userId, message);
     }
 
+    public String getMessageFromRedis(String userId) {
+        return encouragementMessageRepo.getMessageFromRedis(userId);
+    }
+
 }
