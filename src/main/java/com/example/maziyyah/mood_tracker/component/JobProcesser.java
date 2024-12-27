@@ -1,5 +1,7 @@
 package com.example.maziyyah.mood_tracker.component;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +18,8 @@ public class JobProcesser {
     private final EncouragementMessageService encouragementMessageService;
     private final DailyRequestTracker requestTracker;
 
+    private static final Logger logger = LoggerFactory.getLogger(JobProcesser.class);
+
     @Qualifier(Utils.template02)
     private final RedisTemplate<String, String> template;
 
@@ -29,15 +33,24 @@ public class JobProcesser {
 
     @Scheduled(fixedDelay = 30000) // 30 seconds interval
     public void processQueue() {
-        if (!redisJobQueue.isEmpty() && requestTracker.getRequestCount() < Constant.LLM_REQUEST_DAILY_LIMIT) {
-            String userId = redisJobQueue.dequeue();
-            if (userId != null) {
-                encouragementMessageService.generateAndSaveMessage(userId);
-                requestTracker.increment();
-                // Enqueue to notificationQueue for NotificationSender
-                template.opsForList().rightPush("notificationQueue", userId);
-            }
+
+        if (redisJobQueue.isEmpty()) {
+            logger.info("Redis job queue is empty. Skipping job processing.");
+            return;
         }
+        if (requestTracker.getRequestCount() >= Constant.LLM_REQUEST_DAILY_LIMIT) {
+            logger.info("Daily limit reached. Skipping job processing.");
+            return;
+        }
+
+        String userId = redisJobQueue.dequeue();
+        if (userId != null) {
+            encouragementMessageService.generateAndSaveMessage(userId);
+            requestTracker.increment();
+            // Enqueue to notificationQueue for NotificationSender
+            template.opsForList().rightPush("notificationQueue", userId);
+        }
+
     }
-    
+
 }

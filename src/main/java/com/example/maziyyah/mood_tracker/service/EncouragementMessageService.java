@@ -49,7 +49,7 @@ public class EncouragementMessageService {
         String timeZone = user.getTimeZone();
         LocalDate yesterday = ZonedDateTime.now(ZoneId.of(timeZone)).toLocalDate().minusDays(1);
         LocalDate currentDate = ZonedDateTime.now(ZoneId.of(timeZone)).toLocalDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // only Local Date! dont have time information
         String currentDateString = currentDate.format(formatter);
 
         // determine yesterday epoch day

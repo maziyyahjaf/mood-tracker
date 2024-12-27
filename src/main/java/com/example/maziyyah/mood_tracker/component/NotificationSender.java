@@ -33,33 +33,33 @@ public class NotificationSender {
         this.telegramNotificationService = telegramNotificationService;
         this.encouragementMessageService = encouragementMessageService;
         this.template = template;
+        // this.userService = userService;
     }
 
     @Scheduled(cron = "0 * * * * ?") // Runs every minute
     public void sendScheduledNotifications() {
+        logger.info("Starting notification queue processing...");
         // Dequeue from Redis List
         String userId = template.opsForList().leftPop("notificationQueue");
 
         // Process until the queue is empty
         while (userId != null) {
-            // Fetch the precomputed encouragement message
-            String encouragementMessage = encouragementMessageService.getMessageFromRedis(userId);
-
-            // Send the message if available
-            if (encouragementMessage != null) {
-                telegramNotificationService.sendScheduledEncouragementMessage(userId, encouragementMessage);
-                logger.info("Sent encouragement message to user {}", userId);
-            } else {
-                logger.warn("No precomputed message found for user {}.", userId);
+            try {
+                String encouragementMessage = encouragementMessageService.getMessageFromRedis(userId);
+    
+                if (encouragementMessage != null) {
+                    telegramNotificationService.sendScheduledEncouragementMessage(userId, encouragementMessage);
+                    logger.info("Sent encouragement message to user {}", userId);
+                } else {
+                    logger.warn("No precomputed message found for user {}.", userId);
+                }
+            } catch (Exception e) {
+                logger.error("Error processing notification for user {}. Skipping.", userId, e);
             }
-
-            // Fetch the next userId in the queue
+    
             userId = template.opsForList().leftPop("notificationQueue");
         }
-
-        logger.info("Finished processing notification queue.");
-        // List<User> usersWithNotificationsDue =
-        // userService.getUsersWithNotificationsDue();
+        // List<User> usersWithNotificationsDue = userService.getUsersWithNotificationsDue();
 
         // if (usersWithNotificationsDue.isEmpty()) {
         // logger.info("No users with notifications due this hour.");

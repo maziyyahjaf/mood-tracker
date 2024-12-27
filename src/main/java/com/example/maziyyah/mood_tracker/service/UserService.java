@@ -109,8 +109,8 @@ public class UserService {
 
         ZonedDateTime nowUTC = ZonedDateTime.now(ZoneId.of("UTC")); // current time in UTC
         return allUsers.stream()
-                        .filter(user -> isNotificationDue(user, nowUTC))
-                        .collect(Collectors.toList());
+                .filter(user -> isNotificationDue(user, nowUTC))
+                .collect(Collectors.toList());
     }
 
     public boolean isNotificationDue(User user, ZonedDateTime nowUTC) {
@@ -127,9 +127,17 @@ public class UserService {
             // Debug logs for clarity
             logger.info("Current time (UTC): {}", nowUTC);
             logger.info("User notification time (Local): {}", userNotificationTime);
+            logger.info("User time zone: {}", userTimeZone);
+            logger.info("User notification window: [{} - {}]",
+                    userNotificationTime.toInstant(),
+                    userNotificationTime.plusMinutes(59).toInstant());
 
-            return userNotificationTime.toInstant().isBefore(nowUTC.toInstant())
-                    && userNotificationTime.plusHours(1).toInstant().isAfter(nowUTC.toInstant());
+            // return userNotificationTime.toInstant().isBefore(nowUTC.toInstant())
+            // && userNotificationTime.plusHours(1).toInstant().isAfter(nowUTC.toInstant());
+            // Notification is due if current time falls within the hour window
+            return nowUTC.toInstant().isAfter(userNotificationTime.minusMinutes(5).toInstant())
+                    && nowUTC.toInstant().isBefore(userNotificationTime.plusMinutes(55).toInstant());
+
         } catch (DateTimeException e) {
             // Log error for invalid time zone and skip this user
             LoggerFactory.getLogger(UserService.class).error("Invalid time zone for user {}: {}", user.getUserId(),
@@ -146,7 +154,7 @@ public class UserService {
         }
         List<String> userRedisKeyList = userRedisKeySet.stream()
                 .collect(Collectors.toList());
-        
+
         return userRedisKeyList;
     }
 

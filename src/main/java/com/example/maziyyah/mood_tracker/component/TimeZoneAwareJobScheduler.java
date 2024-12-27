@@ -1,6 +1,7 @@
 package com.example.maziyyah.mood_tracker.component;
 
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 
@@ -26,9 +27,10 @@ public class TimeZoneAwareJobScheduler {
 
     @Scheduled(cron = "0 0 * * * ?") // Runs every hour
     public void scheduleJobs() {
+        logger.info("Scheduled job triggered at {}", ZonedDateTime.now());
         
         List<User> usersWithNotificationsDue = userService.getUsersWithNotificationsDue();
-
+        
         if (usersWithNotificationsDue.isEmpty()) {
             logger.info("No users with notifications due this hour.");
             return;
