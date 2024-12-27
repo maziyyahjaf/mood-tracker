@@ -58,14 +58,16 @@ public class SettingsController {
             Model model,
             HttpSession session) {
 
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
-            return "profileSettings"; // Return with validation errors
-        }
-
         String userId = (String) session.getAttribute("userId");
+        
         if (userId == null) {
             return "redirect:/login";
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+            model.addAttribute("originalUsername", originalUsername);
+            return "profileSettings"; // Return with validation errors
         }
 
         // Check if the username was changed
@@ -74,6 +76,7 @@ public class SettingsController {
             if (!userService.updateUsername(originalUsername, entity.getUsername())) {
                 bindingResult.rejectValue("username", "error.username", "This username is already taken.");
                 model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+                model.addAttribute("originalUsername", originalUsername);
                 return "profileSettings";
             }
         }
@@ -95,8 +98,7 @@ public class SettingsController {
         user.setEncouragementOptIn(entity.isEncouragementOptIn());
         user.setTimeZone(entity.getTimeZone());
 
-
-        userService.updateUserDetails(userId,user);
+        userService.updateUserDetails(userId, user);
 
         return "redirect:/profile/success"; // redirect on successful update
 
