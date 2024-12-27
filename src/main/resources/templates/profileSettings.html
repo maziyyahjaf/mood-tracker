@@ -132,7 +132,7 @@
                 <label for="alertThreshold" class="form-label">Notify loved ones after how many bad days?</label>
                 <select id="alertThreshold" name="alertThreshold" class="form-select"
                     aria-describedby="alertThresholdHelp" th:field="*{alertThreshold}">
-                    <option value="" disabled th:selected="*{alertThreshold == null}">Select an option</option>
+                    <option value="" disabled>Select an option</option>
                     <option value="1" th:selected="*{alertThreshold == 1}">1 bad day</option>
                     <option value="2" th:selected="*{alertThreshold == 2}">2 bad days</option>
                     <option value="3" th:selected="*{alertThreshold == 3}">3 bad days</option>
