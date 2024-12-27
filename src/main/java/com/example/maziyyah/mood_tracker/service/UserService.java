@@ -146,6 +146,7 @@ public class UserService {
         }
         List<String> userRedisKeyList = userRedisKeySet.stream()
                 .collect(Collectors.toList());
+        
         return userRedisKeyList;
     }
 
