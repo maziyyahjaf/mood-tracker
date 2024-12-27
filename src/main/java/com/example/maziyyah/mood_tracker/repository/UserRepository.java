@@ -49,7 +49,7 @@ public class UserRepository {
         userHash.put("notificationTime", user.getNotificationTime().toString());
 
         template.opsForHash().putAll(userKey, userHash);
-        template2.opsForSet().add(Constant.USER_REDIS_KEY_LIST, userKey);
+        template2.opsForSet().add(Constant.USER_REDIS_KEY_LIST_PREFIX, userKey);
         template.opsForValue().set(usernameKey, user.getUserId()); // Save the mapping of username -> userId
         template.opsForHash().put(Constant.linkingCodes, linkingCode, user.getUserId());
         return true;
@@ -143,7 +143,7 @@ public class UserRepository {
 
     public Set<String> getAllUsersRedisKey() {
         // fetch all user keys
-        Set<String> userKeys = template2.opsForSet().members(Constant.USER_REDIS_KEY_LIST);
+        Set<String> userKeys = template2.opsForSet().members(Constant.USER_REDIS_KEY_LIST_PREFIX);
 
         return userKeys;
     }

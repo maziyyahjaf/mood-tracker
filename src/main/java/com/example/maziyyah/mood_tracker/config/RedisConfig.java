@@ -45,7 +45,7 @@ public class RedisConfig {
     }
 
     @Bean
-    @Qualifier(Utils.template01) // for using with Map, List and value?
+    @Qualifier(Utils.template01) 
     public RedisTemplate<String, Object> template01(JedisConnectionFactory jcf) {
         
         RedisTemplate<String, Object> template = new RedisTemplate<>();
@@ -61,7 +61,7 @@ public class RedisConfig {
     }
 
     @Bean
-    @Qualifier(Utils.template02) // for using with Objects
+    @Qualifier(Utils.template02)
     public RedisTemplate<String, String> template02(JedisConnectionFactory jcf) {
         
         RedisTemplate<String, String> template = new RedisTemplate<>();

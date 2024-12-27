@@ -16,7 +16,7 @@ public class Constant {
     public static final String LOVED_ONE_KEY_PREFIX = "lovedOne:";
     public static final String INVITE_KEY_PREFIX = "invite:";
     public static final String PROCESSED_UPDATE_KEY_PREFIX = "processed_updateID:";
-    public static final String USER_REDIS_KEY_LIST = "user:redis_keys";
+    public static final String USER_REDIS_KEY_LIST_PREFIX = "user:redis_keys";
 
     public static final String QUEUE_KEY = "encouragement_job_queue";
     public static final int LLM_REQUEST_DAILY_LIMIT = 50;
