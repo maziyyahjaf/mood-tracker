@@ -111,6 +111,7 @@ public class UserController {
             // model.addAttribute("error", "Username is taken.");
             // use binding result
             results.rejectValue("username", "error.username", "This username is already taken.");
+            model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
             return "userRegistration3";
         }
 
