@@ -115,8 +115,12 @@ public class LovedOneController {
 
         if (nameError != null || contactError != null || relationshipError != null) {
             model.addAttribute("nameError", nameError);
+            model.addAttribute("name", name);
             model.addAttribute("contactError", contactError);
+            model.addAttribute("contact", contact);
             model.addAttribute("relationshipError", relationshipError);
+            model.addAttribute("relationship", relationship);
+
             return false;
         }
         return true;

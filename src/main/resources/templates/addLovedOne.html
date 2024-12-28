@@ -96,17 +96,17 @@
         <form th:action="@{/lovedones/invite}" method="POST">
             <div class="mb-4">
                 <label for="name">What’s their name?</label>
-                <input type="text" id="name" name="name" class="form-control" placeholder="e.g., John Doe" />
+                <input type="text" id="name" name="name" class="form-control" th:value="${name}" placeholder="e.g., John Doe" />
                 <span th:if="${nameError}" class="error-message" th:text="${nameError}"></span>
             </div>
             <div class="mb-4">
                 <label for="contact">What’s their contact number?</label>
-                <input type="tel" id="contact" name="contact" class="form-control" placeholder="e.g., +1234567890" />
+                <input type="tel" id="contact" name="contact" class="form-control" th:value="${contact}" placeholder="e.g., +1234567890" />
                 <span th:if="${contactError}" class="error-message" th:text="${contactError}"></span>
             </div>
             <div class="mb-4">
                 <label for="relationship">What’s your relationship?</label>
-                <input type="text" id="relationship" name="relationship" class="form-control" placeholder="e.g., Best Friend, Sister" />
+                <input type="text" id="relationship" name="relationship" class="form-control" th:value="${relationship}" placeholder="e.g., Best Friend, Sister" />
                 <span th:if="${relationshipError}" class="error-message" th:text="${relationshipError}"></span>
             </div>
             <button type="submit" class="btn-primary">
