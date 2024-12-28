@@ -47,6 +47,7 @@ public class UserRepository {
         userHash.put("encouragementOptIn", String.valueOf(user.isEncouragementOptIn()));
         userHash.put("timeZone", user.getTimeZone());
         userHash.put("notificationTime", user.getNotificationTime().toString());
+        userHash.put("linkingCode", linkingCode);
 
         template.opsForHash().putAll(userKey, userHash);
         template2.opsForSet().add(Constant.USER_REDIS_KEY_LIST_PREFIX, userKey);
@@ -151,6 +152,18 @@ public class UserRepository {
     public Map<Object, Object> getUserData(String userRedisKey) {
         return template.opsForHash().entries(userRedisKey);
     }
+
+    public boolean checkIfUserHasLinkedTelegramAccount(String userId) {
+        return template.opsForHash().hasKey(Constant.userChatIds, userId);
+    }
+
+    public Object getUserLinkingCode(String userId) {
+        String userKey = Constant.USER_KEY_PREFIX + userId; // Use userId as the primary key
+        return template.opsForHash().get(userKey, "linkingCode");
+
+    }
+
+
 
   
 

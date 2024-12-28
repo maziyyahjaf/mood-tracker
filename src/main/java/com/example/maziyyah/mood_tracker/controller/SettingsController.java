@@ -2,6 +2,7 @@ package com.example.maziyyah.mood_tracker.controller;
 
 import java.time.ZoneId;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +23,9 @@ import jakarta.validation.Valid;
 @RequestMapping("/profile")
 public class SettingsController {
 
+    @Value("${telegram.bot.base.url}")
+    private String telegramBotBaseUrl;
+
     private final UserService userService;
 
     public SettingsController(UserService userService) {
@@ -32,8 +36,18 @@ public class SettingsController {
     public String showProfileSettings(HttpSession session, Model model) {
         // Retrieve userId from session
         String userId = (String) session.getAttribute("userId");
+
         if (userId == null) {
             return "redirect:/login"; // Redirect to login if not authenticated
+        }
+
+        // check if user has telegram linked
+        if (!userService.checkIfUserHasLinkedTelegramAccount(userId)) {
+            // get linking code
+            String linkingCode = userService.getUserLinkingCode(userId);
+            // generate the link to Telegram with the linking code pre-filled
+            String telegramBotUrl = telegramBotBaseUrl + linkingCode;
+            model.addAttribute("telegramBotUrl", telegramBotUrl);
         }
 
         // Fetch user details from Redis
@@ -49,7 +63,7 @@ public class SettingsController {
         model.addAttribute("originalUsername", user.getUsername());
         model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
 
-        return "profileSettings";
+        return "profileSettings1";
     }
 
     @PostMapping("/settings")
@@ -60,9 +74,10 @@ public class SettingsController {
             HttpSession session) {
 
         // System.out.println("Original Username: " + originalUsername);
-        // System.out.println("Updated bad day alert threshold: " + entity.getAlertThreshold());
+        // System.out.println("Updated bad day alert threshold: " +
+        // entity.getAlertThreshold());
         String userId = (String) session.getAttribute("userId");
-        
+
         if (userId == null) {
             return "redirect:/login";
         }

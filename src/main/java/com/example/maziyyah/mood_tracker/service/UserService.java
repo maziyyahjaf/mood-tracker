@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.maziyyah.mood_tracker.exceptions.LinkingCodeNotFoundException;
 // import com.example.maziyyah.mood_tracker.exceptions.UsernameNotFoundException;
 import com.example.maziyyah.mood_tracker.model.User;
 import com.example.maziyyah.mood_tracker.repository.UserRepository;
@@ -193,5 +194,18 @@ public class UserService {
 
         return user;
     }
+    
+    // need a method to check if user has linked telegram account
+    public boolean checkIfUserHasLinkedTelegramAccount(String userId) {
+        return userRepo.checkIfUserHasLinkedTelegramAccount(userId);
+    }
 
-}
+    // fetch linkingCode for user
+    public String getUserLinkingCode(String userId) {
+        Object linkingCode = userRepo.getUserLinkingCode(userId);
+        if (linkingCode == null) {
+            throw new LinkingCodeNotFoundException("No linking code found for userId: " + userId);
+        }
+        return linkingCode.toString();
+    }
+}   
