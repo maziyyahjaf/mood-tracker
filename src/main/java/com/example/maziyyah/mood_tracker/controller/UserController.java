@@ -115,7 +115,7 @@ public class UserController {
         String telegramBotUrl = telegramBotBaseUrl + linkingCode;
         model.addAttribute("telegramBotUrl", telegramBotUrl);
 
-        return "successRegistration";
+        return "successRegistration3";
 
     }
 

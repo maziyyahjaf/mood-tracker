@@ -32,9 +32,9 @@ public class ExternalLLMService {
     private static final Logger logger = LoggerFactory.getLogger(TelegramNotificationService.class);
 
     public String generateMessage(String context, String userName) {
-        String prompt = "Based on the following mood summary, create an encouraging message for " + userName + " :\n"
+        String prompt = "Based on the following mood summary, create an encouraging message that balances optimism and empathy for " + userName + " :\n"
                 + context;
-        // .append("Do balance optimism and empathy in your response.\n\n")
+                
         System.out.println("Generated Prompt: " + prompt);
         String response = sendGeminiPrompt(prompt);
         System.out.println("Gemini Response: " + response);

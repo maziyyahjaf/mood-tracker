@@ -64,7 +64,7 @@ public class LovedOneController {
         String inviteLink = lovedOneService.generateInviteLink(userId, lovedOne);
 
         model.addAttribute("inviteLink", inviteLink);
-        return "successAddLovedOne";
+        return "successAddLovedOne3";
 
     }
 
@@ -86,14 +86,14 @@ public class LovedOneController {
         String inviteLink = lovedOneService.generateNewInviteLink(inviteToken);
         model.addAttribute("inviteLink", inviteLink);
 
-        return "successAddLovedOne";
+        return "successAddLovedOne3";
     }
 
     @GetMapping("/invite/success")
     public String showSuccessInvitePage(@RequestParam("link") String inviteLink, Model model) {
         // shareable link
         model.addAttribute("inviteLink", inviteLink);
-        return "successAddLovedOne";
+        return "successAddLovedOne3";
     }
 
     public boolean validateLovedOneInputs(String name, String contact, String relationship, Model model) {
