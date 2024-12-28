@@ -35,7 +35,7 @@ public class InviteController {
         model.addAttribute("telegramBotUrl", telegramBotUrl);
         model.addAttribute("invitedBy", name);
         
-        return "inviteInstructions";
+        return "inviteInstructions2";
     }
 
 }

@@ -88,9 +88,10 @@ public class UserController {
     public String showRegistrationPage(Model model) {
         // add validations to the UserDTO model
         UserDTO userDTO = new UserDTO();
+        userDTO.setTimeZone(""); // Ensure timeZone is empty initially
         model.addAttribute("userDTO", userDTO);
         model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
-        return "userRegistration";
+        return "userRegistration3";
     }
 
     @PostMapping("/register")
@@ -99,7 +100,7 @@ public class UserController {
 
         if (results.hasErrors()) {
             model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
-            return "userRegistration";
+            return "userRegistration3";
         }
 
         // need to check if username is available etc
@@ -107,8 +108,10 @@ public class UserController {
         String linkingCode = userService.generateLinkingCode();
 
         if (!userService.addUser(user, linkingCode)) {
-            model.addAttribute("error", "Username is taken.");
-            return "userRegistration";
+            // model.addAttribute("error", "Username is taken.");
+            // use binding result
+            results.rejectValue("username", "error.username", "This username is already taken.");
+            return "userRegistration3";
         }
 
         // generate the link to Telegram with the linking code pre-filled

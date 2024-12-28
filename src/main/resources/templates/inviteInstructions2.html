@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Mood Tracker</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #FFF9E6, #FFE4E1);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .invite-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            color: #0088cc;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+
+        /* Steps Section */
+        .steps {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .step {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .step-icon {
+            font-size: 1.5rem;
+            color: #ff8c00;
+            margin-right: 15px;
+        }
+
+        .step-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* Buttons */
+        .btn-primary,
+        .btn-telegram {
+            display: inline-block;
+            border-radius: 24px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease-in-out;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .btn-telegram {
+            background-color: #0088cc;
+            box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);
+        }
+
+        .btn-telegram:hover {
+            background-color: #0077b6;
+            box-shadow: 0 8px 16px rgba(0, 136, 204, 0.4);
+        }
+
+        .btn-primary {
+            background-color: #ff8c00;
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: #e57c00;
+            box-shadow: 0 8px 16px rgba(255, 140, 0, 0.4);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invite-container">
+        <!-- Headline -->
+        <h1>🌟 Help Support Your Loved One</h1>
+
+        <!-- Supporting Text -->
+        <p>
+            <span th:text="${invitedBy}">Alex</span> has invited you to stay connected through the Mood Tracker app. By starting the Telegram bot, you’ll receive updates whenever they need extra care.
+        </p>
+
+        <p>
+            You don’t need to create an account. Just follow the steps below to start helping:
+        </p>
+
+        <!-- Steps Section -->
+        <div class="steps">
+            <div class="step">
+                <span class="step-icon">1️⃣</span>
+                <span class="step-description">
+                    Tap the button below to <strong>start the Telegram bot</strong>.
+                </span>
+            </div>
+            <div class="step">
+                <span class="step-icon">2️⃣</span>
+                <span class="step-description">
+                    When Telegram opens, press <strong>"Start"</strong> at the bottom of the chat.
+                </span>
+            </div>
+            <div class="step">
+                <span class="step-icon">3️⃣</span>
+                <span class="step-description">
+                    That’s it! You’ll be notified if they’ve had a rough patch.
+                </span>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <a th:href="${telegramBotUrl}" target="_blank" class="btn-telegram">🚀 Start Telegram Bot</a>
+        <a href="/" class="btn-primary">🏠 Back to Home</a>
+    </div>
+</body>
+
+</html>

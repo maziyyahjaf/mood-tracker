@@ -8,11 +8,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" /> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=id_card,language" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to bottom right, #a2d9ff, #ffedcc);
+            background: linear-gradient(to bottom right, hsl(34, 100%, 87%), hsl(207, 74%, 88%));
             height: 100vh;
             margin: 0;
             display: flex;
@@ -22,14 +24,20 @@
 
         .register-container {
             background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
         }
 
+        .mb-3 {
+            margin-bottom: 1rem; /* Adjust to create consistent spacing */
+        }
+
         h2 {
+            font-size: 2rem;
+            font-weight: 700;
             text-align: center;
             margin-bottom: 1.5rem;
             color: #333;
@@ -40,16 +48,25 @@
             padding: 0.8rem;
         }
 
+        .form-control:focus {
+            border-color: #ff8c00;
+            box-shadow: 0 0 5px rgba(255, 140, 0, 0.5);
+            outline: none;
+        }
+
         button.btn-primary {
             width: 100%;
             border-radius: 20px;
             padding: 0.8rem;
-            background-color: #ff8c00;
+            background-color: hsl(27, 100%, 50%);
             border: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
         button.btn-primary:hover {
-            background-color: #e57c00;
+            background-color: hsl(27, 100%, 50%);
+            transform: scale(1.02);
         }
 
         .login-link {
@@ -81,6 +98,27 @@
             color: #333;
         }
 
+        .alert-danger {
+            /* display: inline-block; */
+            line-height: 1.2; /* Tighten line spacing if needed */
+            margin: 0;
+            padding: 0.8rem 1rem; /* Adjust padding for a balanced look */
+            font-size: 1rem;    /* Ensure the font size matches other text elements */
+            border-radius: 8px;
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
      
     </style>
 </head>
@@ -89,34 +127,42 @@
     <div class="register-container">
         <form th:action="@{/register}" th:object="${userDTO}" method="POST">
             <div class="d-flex justify-content-center mb-3">
-                <span class="alert alert-danger text-center" th:if="${error}" th:text="${error}"></span>
+                <span class="alert alert-danger text-center w-100" th:if="${error}" th:text="${error}"></span>
             </div>
 
-            <h2>Create New Account</h2>
+            <h2>Create Your Account</h2>
 
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
                 <!-- <label for="username" class="form-label">Username</label> -->
-                <input type="text" id="username" class="form-control" th:field="*{username}" placeholder="Username">
+                <span class="material-icons position-absolute"
+                style="top: 30%; transform: translateY(-50%); left: 10px;">person</span>
+                <input type="text" id="username" class="form-control ps-5" th:field="*{username}" placeholder="Username">
                 <div class="alert alert-danger mt-1" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
                 </div>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
                 <!-- <label for="name" class="form-label">Name</label> -->
-                <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Name">
+                <span class="material-symbols-outlined position-absolute"
+                style="top: 30%; transform: translateY(-50%); left: 10px;">id_card</span>
+                <input type="text" id="name" class="form-control ps-5" th:field="*{name}" placeholder="Name">
                 <div class="alert alert-danger mt-1" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
                 <!-- <label for="password" class="form-label">Password</label> -->
-                <input type="password" id="password" class="form-control" th:field="*{password}" placeholder="Password">
+                <span class="material-icons position-absolute"
+                style="top: 30%; transform: translateY(-50%); left: 10px;">lock</span>
+                <input type="password" id="password" class="form-control ps-5" th:field="*{password}" placeholder="Password">
                 <div class="alert alert-danger mt-1" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
                 </div>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
                 <!-- Time Zone Selection -->
-                <select id="timeZone" class="form-select form-control" th:field="*{timeZone}">
+                <span class="material-symbols-outlined position-absolute"
+                style="top: 30%; transform: translateY(-50%); left: 10px;">language</span>
+                <select id="timeZone" class="form-select form-control ps-5" th:field="*{timeZone}">
                     <option value="" disabled selected>Select your time zone</option>
                     <option th:each="zone : ${timeZones}" th:value="${zone}" th:text="${zone}"></option>
                 </select>
