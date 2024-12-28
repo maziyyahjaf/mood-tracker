@@ -20,7 +20,7 @@ public class ProfileUpdateDTO {
 
     @Min(1)
     @Max(5)
-    private int alertThreshold;
+    private Integer alertThreshold;
 
     private boolean encouragementOptIn;
 

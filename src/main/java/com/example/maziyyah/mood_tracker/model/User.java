@@ -14,7 +14,7 @@ public class User {
     private String username;
     private String name;
     private String password;   
-    private int alertThreshold; // number of bad days before loved ones are notified (optional)
+    private Integer alertThreshold; // number of bad days before loved ones are notified (optional)
     private boolean encouragementOptIn; // whether the user opts in for surprise encouragements (optional)
     private String timeZone;
     private LocalTime notificationTime;

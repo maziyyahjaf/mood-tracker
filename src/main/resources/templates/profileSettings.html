@@ -132,12 +132,12 @@
                 <label for="alertThreshold" class="form-label">Notify loved ones after how many bad days?</label>
                 <select id="alertThreshold" name="alertThreshold" class="form-select"
                     aria-describedby="alertThresholdHelp" th:field="*{alertThreshold}">
-                    <option value="" disabled>Select an option</option>
-                    <option value="1" th:selected="*{alertThreshold == 1}">1 bad day</option>
-                    <option value="2" th:selected="*{alertThreshold == 2}">2 bad days</option>
-                    <option value="3" th:selected="*{alertThreshold == 3}">3 bad days</option>
-                    <option value="4" th:selected="*{alertThreshold == 4}">4 bad days</option>
-                    <option value="5" th:selected="*{alertThreshold == 5}">5 bad days</option>
+                    <!-- <option value="" disabled>Select an option</option> -->
+                    <option value="1">1 bad day</option>
+                    <option value="2">2 bad days</option>
+                    <option value="3">3 bad days</option>
+                    <option value="4">4 bad days</option>
+                    <option value="5">5 bad days</option>
                 </select>
                 <small id="alertThresholdHelp" class="form-text text-muted">
                     Choose the number of consecutive bad days before loved ones are notified.
