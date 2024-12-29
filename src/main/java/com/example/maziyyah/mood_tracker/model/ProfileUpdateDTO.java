@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 public class ProfileUpdateDTO {
     
     @NotEmpty(message = "Oops! It looks like you forgot to enter a username.")
-    @Pattern(regexp = "^[a-zA-Z0-9._-]{5,50}$", message = "Your username should be 5-50 characters and can include letters, numbers, dots, underscores, or hyphens.")
+    @Pattern(regexp = "^[a-zA-Z0-9._-]{5,50}$", message = "Your username can be 5-50 characters long and may include letters, numbers, dots (.), underscores (_), or hyphens (-).")
     private String username;
     
     @Pattern(regexp = "^$|.{8,}", message = "To keep your account secure, passwords should be at least 8 characters long if you're updating it.")
@@ -16,7 +16,7 @@ public class ProfileUpdateDTO {
 
     @NotEmpty(message = "We’d love to know your name! Could you fill this in?")
     @Pattern(regexp = "^[a-zA-Z][a-zA-Z .'-]{1,48}[a-zA-Z]$", 
-    message = "Your name should be 3-50 characters and can include letters, spaces, dots, hyphens, or apostrophes.")
+    message = "Your name can be 3-50 characters and may include letters, spaces, dots (.), hyphens (-), or apostrophes ('). Let’s keep it simple—no numbers or other symbols.")
     private String name;
 
     @Min(1)
