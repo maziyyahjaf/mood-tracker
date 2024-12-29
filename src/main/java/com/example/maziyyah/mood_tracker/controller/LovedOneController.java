@@ -109,21 +109,21 @@ public class LovedOneController {
         if (name.isEmpty() || name.length() < 2) {
             nameError = "Please enter a name with at least 2 characters to continue.";
         } else if (!name.matches("^[a-zA-Z .'-]{2,50}$")) {
-            nameError = "Name should be 2-50 characters and can include letters, spaces, dots, hyphens, or apostrophes.";
+            nameError = "Their name should be 2-50 characters and can include letters, spaces, dots, hyphens, or apostrophes. Let's keep it simple and heartfelt!";
         }
 
         // Validate contact
         if (contact.isEmpty()) {
             contactError = "It looks like the contact number is missing.";
         } else if (!contact.matches("^\\+?[0-9]{7,15}$")) {
-            contactError = "Contact must be a valid number with 7 to 15 digits. You can optionally include a '+' for international numbers.";
+            contactError = "Their contact should be a valid number with 7 to 15 digits. You can include a '+' if it's an international number. Easy and clear!";
         }
 
         // Validate relationship
         if (relationship.isEmpty()) {
             relationshipError = "We’d love to know your relationship with them. Could you fill this in?";
         } else if (!relationship.matches("^[\\w\\s.,!?'-]{1,50}$")) {
-            relationshipError = "Only alphanumeric characters and common punctuation are allowed, and it must be between 1 and 50 characters.";
+            relationshipError = "Describe your connection in 1-50 characters using letters, numbers, and common punctuation. Let's keep it meaningful and clear!";
         }
 
         if (nameError != null || contactError != null || relationshipError != null) {
