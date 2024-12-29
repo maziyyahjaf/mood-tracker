@@ -85,7 +85,7 @@ public class SettingsController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
             model.addAttribute("originalUsername", originalUsername);
-            return "profileSettings"; // Return with validation errors
+            return "profileSettings1"; // Return with validation errors
         }
 
         // Check if the username was changed
@@ -95,7 +95,7 @@ public class SettingsController {
                 bindingResult.rejectValue("username", "error.username", "This username is already taken.");
                 model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
                 model.addAttribute("originalUsername", originalUsername);
-                return "profileSettings";
+                return "profileSettings1";
             }
         }
 
