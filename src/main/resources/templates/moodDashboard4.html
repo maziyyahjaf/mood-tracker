@@ -22,8 +22,8 @@
 
         /* Body Styling */
         body {
-            background-color: #f7f9fc;
-            color: #333;
+            background-color: hsl(216, 45%, 98%);
+            color: hsl(0, 0%, 20%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -33,7 +33,8 @@
 
         /* Navbar */
         .navbar {
-            background-color: #dfeaf5;
+            background-color: hsl(210, 52%, 92%);
+            /* background-color: hsl(205, 100%, 60%); */
             width: 100%;
             display: flex;
             justify-content: space-around;
@@ -41,12 +42,14 @@
             position: fixed;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid #c9d6e7;
+            border-bottom: 1px solid hsl(214, 38%, 85%);
+            /* border-bottom: 1px solid hsl(205, 86%, 53%) */
         }
 
         .nav-item {
             text-decoration: none;
-            color: #333;
+            color: hsl(0, 0%, 20%);
+            /* color: hsl(150, 40%, 94%); */
             font-size: 1rem;
             font-weight: 600;
             padding: 10px 20px;
@@ -62,7 +65,7 @@
         }
 
         .nav-item:hover {
-            background-color: #c9d6e7;
+            background-color: hsl(214, 38%, 85%);
             transform: scale(1.05);
         }
 
@@ -80,7 +83,7 @@
         .welcome-message h1 {
             font-size: 2.5rem;
             font-weight: 600;
-            color: #4a90e2;
+            color: hsl(212, 72%, 59%);
             margin-bottom: 20px;
             line-height: 1.4; /* Ensures proper spacing for multi-line text */
             word-wrap: break-word; /* Ensures long words break gracefully */
@@ -89,7 +92,7 @@
 
         /* Mood Summary */
         .mood-summary {
-            background-color: #eaf6f0;
+            background-color: hsl(150, 40%, 94%);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
@@ -98,18 +101,19 @@
 
         .mood-summary p {
             font-size: 1rem;
-            color: #333;
+            color: hsl(0, 0%, 20%);
             margin: 10px 0;
         }
 
         .mood-summary strong {
-            color: #4caf50;
+            color: hsl(122, 39%, 49%);
         }
 
         /* Log Button */
         .log-button .button {
             display: inline-block;
-            background-color: #4a90e2;
+            background-color: hsl(212, 72%, 59%);
+            /* background-color: hsl(216, 100%, 47%); */
             color: white;
             border: none;
             border-radius: 25px;
@@ -123,14 +127,15 @@
         }
 
         .log-button .button:hover {
-            background-color: #357ac9;
+            background-color: hsl(212, 58%, 50%);
+            /* background-color: hsl(216, 95%, 40%); */
             transform: scale(1.1); /* Slightly larger hover scale */
         }
 
         /* Focus State for Accessibility */
         .log-button .button:focus {
             outline: none;
-            box-shadow: 0 0 8px #4a90e2;
+            box-shadow: 0 0 8px hsl(212, 72%, 59%);
         }
 
         /* Responsive Styling */
