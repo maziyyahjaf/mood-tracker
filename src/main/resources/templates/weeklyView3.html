@@ -28,7 +28,8 @@
         h1 {
             font-size: 2.5rem;
             font-weight: 700;
-            color: hsl(212, 72%, 59%); /* Calming blue */
+            color: hsl(212, 72%, 59%);
+            /* Calming blue */
             margin-bottom: 1.5rem;
             text-align: center;
         }
@@ -85,6 +86,14 @@
             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
         }
 
+        .tile-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.1rem; /* Adjusts dynamically */  
+        }
+
         .tile-date {
             font-size: clamp(1.3rem, 2vw, 1.3rem);
             font-weight: 500;
@@ -92,7 +101,8 @@
         }
 
         .tile-score {
-            font-size: clamp(2rem, 3vw, 2.3rem);
+            font-size: clamp(2rem, 3vw, 2.6rem);
+            margin-top: -8px;
         }
 
         /* Empty State */
@@ -156,9 +166,11 @@
             <div class="col-6 col-md-4" th:each="summary : ${weeklySummaries}">
                 <a th:href="@{/moods/dailyview/{epochDay}(epochDay=${summary.epochDay})}" class="text-decoration-none">
                     <div th:class="tile" th:style="'background-color:' + ${summary.summaryColor}">
-                        <div class="tile-date" th:text="${#temporals.format(summary.date, 'MMM dd')}"></div>
-                        <div class="tile-score">
-                            <span th:text="${summary.emoji}"></span>
+                        <div class="tile-content">
+                            <div class="tile-date" th:text="${#temporals.format(summary.date, 'MMM dd')}"></div>
+                            <div class="tile-score">
+                                <span th:text="${summary.emoji}"></span>
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -172,4 +184,3 @@
 </body>
 
 </html>
-
