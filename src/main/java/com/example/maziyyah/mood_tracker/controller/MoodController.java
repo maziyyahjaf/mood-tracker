@@ -251,7 +251,7 @@ public class MoodController {
         if (moodError != null || noteError != null || tagStringError != null) {
             model.addAttribute("moodError", moodError);
             model.addAttribute("noteError", noteError);
-            if (note != null || !note.trim().isEmpty()) {
+            if (note != null && !note.trim().isEmpty()) {
                 model.addAttribute("note", note);
             }
             model.addAttribute("tagStringError", tagStringError);

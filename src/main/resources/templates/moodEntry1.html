@@ -220,7 +220,7 @@
 
             <!-- Note Input -->
              <div class="mb-3">
-                <textarea id="note" name="note" class="textarea" maxlength="255" th:value="${note}" placeholder="Describe why you feel this way..."></textarea>
+                <textarea id="note" name="note" class="textarea" maxlength="255" th:text="${note}" placeholder="Describe why you feel this way..."></textarea>
                 <span th:if="${noteError}" class="error-message" th:text="${noteError}"></span>
              </div>
             
