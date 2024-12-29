@@ -267,8 +267,11 @@
                     <option value="" disabled th:if="${profileUpdateDTO.timeZone == null}" selected>
                         Select your time zone
                     </option>
-                    <option th:each="zone : ${timeZones}" th:value="${zone}"
-                        th:selected="${zone == profileUpdateDTO.timeZone}" th:text="${zone}"></option>
+                    <!-- Time Zone Options-->
+                    <option th:each="zoneOption : ${timeZones}" 
+                            th:value="${zoneOption.zoneId}"
+                            th:selected="${zoneOption.zoneId == profileUpdateDTO.timeZone}" 
+                            th:text="${zoneOption.displayName}"></option>
                 </select>
                 <div class="alert alert-danger mt-1" th:if="${#fields.hasErrors('timeZone')}" th:errors="*{timeZone}">
                 </div>

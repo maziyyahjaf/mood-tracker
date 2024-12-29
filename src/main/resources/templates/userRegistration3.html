@@ -181,7 +181,7 @@
                     <span class="material-symbols-outlined">language</span>
                     <select id="timeZone" class="form-select" th:field="*{timeZone}">
                         <option value="" disabled selected>Select your time zone</option>
-                        <option th:each="zone : ${timeZones}" th:value="${zone}" th:text="${zone}"></option>
+                        <option th:each="zone : ${timeZones}" th:value="${zone.zoneId}" th:text="${zone.displayName}"></option>
                     </select>
                 </div>
                 <div class="alert alert-danger" th:if="${#fields.hasErrors('timeZone')}" th:errors="*{timeZone}"></div>

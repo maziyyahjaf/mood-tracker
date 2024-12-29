@@ -1,6 +1,7 @@
 package com.example.maziyyah.mood_tracker.controller;
 
-import java.time.ZoneId;
+// import java.time.ZoneId;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.maziyyah.mood_tracker.model.ProfileUpdateDTO;
+import com.example.maziyyah.mood_tracker.model.TimeZoneOption;
 import com.example.maziyyah.mood_tracker.model.User;
 import com.example.maziyyah.mood_tracker.service.UserService;
+import com.example.maziyyah.mood_tracker.util.TimeZoneUtils;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -59,17 +62,21 @@ public class SettingsController {
         dto.setEncouragementOptIn(user.isEncouragementOptIn());
         dto.setTimeZone(user.getTimeZone());
 
+        // Fetch the time zone options using the utility method
+        List<TimeZoneOption> timeZones = TimeZoneUtils.getTimeZoneOptions();
+        model.addAttribute("timeZones", timeZones); // Pass time zone options to the view
+
         model.addAttribute("profileUpdateDTO", dto);
         model.addAttribute("originalUsername", user.getUsername());
-        model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+        // model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all
+        // available time zones
 
         return "profileSettings1";
     }
 
     @PostMapping("/settings")
     public String updateProfile(@Valid @ModelAttribute("profileUpdateDTO") ProfileUpdateDTO entity,
-            @RequestParam("originalUsername") String originalUsername,
-            BindingResult bindingResult,
+            BindingResult bindingResult, @RequestParam("originalUsername") String originalUsername,
             Model model,
             HttpSession session) {
 
@@ -83,7 +90,12 @@ public class SettingsController {
         }
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+            // model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+
+            // Fetch the time zone options using the utility method
+            List<TimeZoneOption> timeZones = TimeZoneUtils.getTimeZoneOptions();
+            model.addAttribute("timeZones", timeZones); // Pass time zone options to the view
+
             model.addAttribute("originalUsername", originalUsername);
             return "profileSettings1"; // Return with validation errors
         }
@@ -93,7 +105,13 @@ public class SettingsController {
             // perform "username already exists" check
             if (!userService.updateUsername(originalUsername, entity.getUsername())) {
                 bindingResult.rejectValue("username", "error.username", "This username is already taken.");
-                model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+
+                // Fetch the time zone options using the utility method
+                List<TimeZoneOption> timeZones = TimeZoneUtils.getTimeZoneOptions();
+                model.addAttribute("timeZones", timeZones); // Pass time zone options to the view
+
+                // model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all
+                // available time zones
                 model.addAttribute("originalUsername", originalUsername);
                 return "profileSettings1";
             }

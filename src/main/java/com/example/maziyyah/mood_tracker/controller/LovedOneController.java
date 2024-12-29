@@ -24,8 +24,7 @@ import jakarta.servlet.http.HttpSession;
 public class LovedOneController {
 
     private final LovedOneService lovedOneService;
-        private static final Logger logger = LoggerFactory.getLogger(LovedOneController.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(LovedOneController.class);
 
     public LovedOneController(LovedOneService lovedOneService) {
         this.lovedOneService = lovedOneService;
@@ -38,7 +37,7 @@ public class LovedOneController {
         Optional<List<String>> addedLovedOnesId = lovedOneService.getAllAddedLovedOnesId(userId);
         List<LovedOneDTO> addedLovedOnes = lovedOneService.getAllLovedOnes(addedLovedOnesId);
         model.addAttribute("addedLovedOnes", addedLovedOnes);
-        
+
         return "lovedOnesList";
     }
 
@@ -52,8 +51,8 @@ public class LovedOneController {
             @RequestParam("contact") String contact,
             @RequestParam("relationship") String relationship,
             HttpSession session, Model model) {
-        
-        // add  manual validations?
+
+        // add manual validations?
         if (!validateLovedOneInputs(name, contact, relationship, model)) {
             return "addLovedOne";
         }
@@ -69,9 +68,9 @@ public class LovedOneController {
     }
 
     @GetMapping("/{lovedOneId}/delete")
-    public String removeLovedOne(@PathVariable("lovedOneId") String lovedOneId,  HttpSession session) {
+    public String removeLovedOne(@PathVariable("lovedOneId") String lovedOneId, HttpSession session) {
         String userId = (String) session.getAttribute("userId");
-        logger.info("lovedOneId from delete: {} " ,lovedOneId);
+        logger.info("lovedOneId from delete: {} ", lovedOneId);
         lovedOneService.deleteLovedOneData(userId, lovedOneId);
         return "redirect:/lovedones";
     }
@@ -80,7 +79,7 @@ public class LovedOneController {
     public String resendInvite(@PathVariable("lovedOneId") String lovedOneId, HttpSession session, Model model) {
         // redirect to invite success??
         // get user id from session
-        logger.info("lovedOneId from resend: {} " ,lovedOneId);
+        logger.info("lovedOneId from resend: {} ", lovedOneId);
         String userId = (String) session.getAttribute("userId");
         String inviteToken = lovedOneService.resendInvite(userId, lovedOneId);
         String inviteLink = lovedOneService.generateNewInviteLink(inviteToken);
@@ -101,16 +100,30 @@ public class LovedOneController {
         String contactError = null;
         String relationshipError = null;
 
+        // Trim inputs
+        name = name.trim();
+        contact = contact.trim();
+        relationship = relationship.trim();
+
+        // Validate name
         if (name.isEmpty() || name.length() < 2) {
             nameError = "Please enter a name with at least 2 characters to continue.";
+        } else if (!name.matches("^[a-zA-Z .'-]{2,50}$")) {
+            nameError = "Name should be 2-50 characters and can include letters, spaces, dots, hyphens, or apostrophes.";
         }
 
+        // Validate contact
         if (contact.isEmpty()) {
             contactError = "It looks like the contact number is missing.";
+        } else if (!contact.matches("^\\+?[0-9]{7,15}$")) {
+            contactError = "Contact must be a valid number with 7 to 15 digits. You can optionally include a '+' for international numbers.";
         }
 
+        // Validate relationship
         if (relationship.isEmpty()) {
             relationshipError = "We’d love to know your relationship with them. Could you fill this in?";
+        } else if (!relationship.matches("^[\\w\\s.,!?'-]{1,50}$")) {
+            relationshipError = "Only alphanumeric characters and common punctuation are allowed, and it must be between 1 and 50 characters.";
         }
 
         if (nameError != null || contactError != null || relationshipError != null) {

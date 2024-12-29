@@ -41,7 +41,7 @@
         .mood-buttons {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 0.5 rem;
+            margin-bottom: 0rem;
         }
 
         .mood-button {
@@ -64,7 +64,7 @@
             padding: 0.8rem;
             font-size: 1rem;
             resize: none;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0rem;
             height: 100px;
             /* color: hsl(180, 100%, 25%); */
         }
@@ -175,17 +175,20 @@
         }
 
         .error-message {
-            display: inline-block;
+            display: block;
             color: hsl(6, 78%, 57%);
             background-color: hsl(6, 83%, 95%);
             border-radius: 8px;
             font-size: 0.9rem;
-            padding: 5px 10px;
-            margin-top: 5px; /* Ensures space between the input field and error */
+            padding: 0.5rem;
+            margin-top: 0.1rem; /* Ensures space between the input field and error */
+            text-align: left;
             margin-left: 2px; /* Optional small indentation */
             line-height: 1.4; /* Improves readability */
             position: relative; /* Ensures it does not interfere with input borders */
-            text-align: left;
+            max-width: 100%; /* Prevents overflow in narrow containers */
+            word-wrap: break-word; /* Handles long error messages gracefully */
+            /* box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); Subtle shadow for emphasis */
         }
     </style>
 </head>
@@ -217,7 +220,7 @@
 
             <!-- Note Input -->
              <div class="mb-3">
-                <textarea id="note" name="note" class="textarea" placeholder="Describe why you feel this way..."></textarea>
+                <textarea id="note" name="note" class="textarea" maxlength="255" placeholder="Describe why you feel this way..."></textarea>
                 <span th:if="${noteError}" class="error-message" th:text="${noteError}"></span>
              </div>
             
@@ -234,10 +237,10 @@
                     <!-- Custom Tags -->
                     <div class="custom-tags mt-3">
                         <input type="text" id="customTagInput" class="form-control" placeholder="E.g., Relaxation">
-                        <span th:if="${tagStringError}" class="error-message" th:text="${tagStringError}"></span>
                         <div id="tagChipsContainer" class="mt-2"></div>
                     </div>
                 </div>
+                <span th:if="${tagStringError}" class="error-message" th:text="${tagStringError}"></span>
             </div>
 
             <!-- Hidden Input to Store All Selected Tags -->

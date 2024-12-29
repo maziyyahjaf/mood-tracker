@@ -1,6 +1,7 @@
 package com.example.maziyyah.mood_tracker.controller;
 
-import java.time.ZoneId;
+// import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.maziyyah.mood_tracker.model.TimeZoneOption;
 import com.example.maziyyah.mood_tracker.model.User;
 import com.example.maziyyah.mood_tracker.model.UserDTO;
 import com.example.maziyyah.mood_tracker.service.UserService;
+import com.example.maziyyah.mood_tracker.util.TimeZoneUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -89,8 +92,13 @@ public class UserController {
         // add validations to the UserDTO model
         UserDTO userDTO = new UserDTO();
         userDTO.setTimeZone(""); // Ensure timeZone is empty initially
+
+        // Fetch the time zone options using the utility method
+        List<TimeZoneOption> timeZones = TimeZoneUtils.getTimeZoneOptions();
+        
         model.addAttribute("userDTO", userDTO);
-        model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+        // model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+        model.addAttribute("timeZones", timeZones); // Pass time zone options to the view
         return "userRegistration3";
     }
 
@@ -99,7 +107,11 @@ public class UserController {
             BindingResult results, Model model) {
 
         if (results.hasErrors()) {
-            model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+            // model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+            
+            // Fetch the time zone options using the utility method
+            List<TimeZoneOption> timeZones = TimeZoneUtils.getTimeZoneOptions();
+            model.addAttribute("timeZones", timeZones); // Pass time zone options to the view
             return "userRegistration3";
         }
 
@@ -108,10 +120,13 @@ public class UserController {
         String linkingCode = userService.generateLinkingCode();
 
         if (!userService.addUser(user, linkingCode)) {
-            // model.addAttribute("error", "Username is taken.");
-            // use binding result
+            
             results.rejectValue("username", "error.username", "This username is already taken.");
-            model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+            // model.addAttribute("timeZones", ZoneId.getAvailableZoneIds()); // Pass all available time zones
+            
+            // Fetch the time zone options using the utility method
+            List<TimeZoneOption> timeZones = TimeZoneUtils.getTimeZoneOptions();
+            model.addAttribute("timeZones", timeZones); // Pass time zone options to the view
             return "userRegistration3";
         }
 

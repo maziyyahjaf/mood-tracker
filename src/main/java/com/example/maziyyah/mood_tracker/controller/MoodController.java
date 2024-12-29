@@ -108,47 +108,53 @@ public class MoodController {
 
     @GetMapping("/log")
     public String showMoodLogPage() {
-        return "moodEntry";
+        return "moodEntry1";
     }
 
     // handles form submission and redirects to daily view
     @PostMapping("/log")
-    public String logMood(@RequestParam("moodScore") Integer moodScore,
-            @RequestParam("note") String note,
-            @RequestParam(value = "tags", required = false, defaultValue = "") String tagsString, HttpSession session)
+    public String logMood(@RequestParam(value = "moodScore", required = false) Integer moodScore,
+            @RequestParam(value = "note", required = false) String note,
+            @RequestParam(value = "tags", required = false, defaultValue = "") String tagsString, HttpSession session,
+            Model model)
             throws JsonProcessingException {
 
-        // get userId from session
-        String userId = (String) session.getAttribute("userId");
+            if (!validateMoodEntryInputs(moodScore, note, tagsString, model)) {
+                return "moodEntry1";
+            }
+            // get userId from session
+            String userId = (String) session.getAttribute("userId");
 
-        // Fetch the user's time zone
-        String userTimeZone = moodTrackerService.getUserTimeZone(userId);
-        ZoneId userZone = ZoneId.of(userTimeZone);
+            // Fetch the user's time zone
+            String userTimeZone = moodTrackerService.getUserTimeZone(userId);
+            ZoneId userZone = ZoneId.of(userTimeZone);
 
-        // get the current timestamp (when form is submitted)
-        // get the current timestamp in UTC
-        Instant now = Instant.now();
-        // long timestampEpochMilli = now.toInstant(ZoneOffset.UTC).toEpochMilli();
-        long timestampEpochMilli = now.toEpochMilli();
+            // get the current timestamp (when form is submitted)
+            // get the current timestamp in UTC
+            Instant now = Instant.now();
+            // long timestampEpochMilli = now.toInstant(ZoneOffset.UTC).toEpochMilli();
+            long timestampEpochMilli = now.toEpochMilli();
 
-        // Convert timestamp to user's local time
-        ZonedDateTime userTime = now.atZone(ZoneOffset.UTC).withZoneSameInstant(userZone);
+            // Convert timestamp to user's local time
+            ZonedDateTime userTime = now.atZone(ZoneOffset.UTC).withZoneSameInstant(userZone);
 
-        // extract the user's local date for grouping purposes
-        // LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
-        LocalDate currentDate = userTime.toLocalDate();
-        long epochDay = currentDate.toEpochDay(); // number of days since 1970-01-01 (local time)
-        System.out.println("epochday" + epochDay);
+            // extract the user's local date for grouping purposes
+            // LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
+            LocalDate currentDate = userTime.toLocalDate();
+            long epochDay = currentDate.toEpochDay(); // number of days since 1970-01-01 (local time)
+            System.out.println("epochday" + epochDay);
 
-        // hand null or empty tags
-        // Convert tagsString to List<String>
-        List<String> tags = tagsString.isEmpty() ? List.of() : Arrays.asList(tagsString.split(","));
+            // hand null or empty tags
+            // Convert tagsString to List<String>
+            List<String> tags = tagsString.isEmpty() ? List.of() : Arrays.asList(tagsString.split(","));
 
-        // save mood entry with user-local time
-        moodTrackerService.addMoodEntry(userId, timestampEpochMilli, epochDay, moodScore, note, tags);
+            // save mood entry with user-local time
+            moodTrackerService.addMoodEntry(userId, timestampEpochMilli, epochDay, moodScore, note, tags);
 
-        // redirect to view all entries for that day
-        return "redirect:/moods/dailyview/" + epochDay;
+            // redirect to view all entries for that day
+            return "redirect:/moods/dailyview/" + epochDay;
+        
+
     }
 
     // handles daily view (show all the moods for the day)
@@ -214,6 +220,41 @@ public class MoodController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login?logout=true";
+    }
+
+    public boolean validateMoodEntryInputs(Integer moodScore, String note, String tagsString, Model model) {
+        String moodError = null;
+        String noteError = null;
+        String tagStringError = null;
+
+        if (moodScore == null) {
+            moodError = "Please select a mood.";
+        } 
+
+        // Validate note
+        if (note == null || note.trim().isEmpty()) {
+            noteError = "A note is required. Please describe your mood.";
+        }
+        if (!note.matches("^[\\w\\s.,!?'-]{1,255}$")) {
+            noteError = "Invalid note. Only alphanumeric characters and common punctuation are allowed, and it must be between 1 and 255 characters.";
+        }
+
+        // Validate tags
+        if (!tagsString.isEmpty() && !tagsString.matches("^[a-zA-Z0-9,\\s]*$")) {
+            tagStringError = "Invalid tags. Only alphanumeric characters and commas are allowed.";
+        }
+
+        if (moodError != null || noteError != null || tagStringError != null) {
+            model.addAttribute("moodError", moodError);
+            model.addAttribute("noteError", noteError);
+            if (note != null || !note.trim().isEmpty()) {
+                model.addAttribute("note", note);
+            }
+            model.addAttribute("tagStringError", tagStringError);
+            return false;
+        }
+
+        return true;
     }
 
 }
