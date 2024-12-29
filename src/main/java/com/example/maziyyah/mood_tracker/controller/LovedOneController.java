@@ -108,7 +108,7 @@ public class LovedOneController {
         // Validate name
         if (name.isEmpty() || name.length() < 2) {
             nameError = "Please enter a name with at least 2 characters to continue.";
-        } else if (!name.matches("^[a-zA-Z .'-]{2,50}$")) {
+        } else if (!name.matches("^[a-zA-Z]+[a-zA-Z .'-]{0,48}[a-zA-Z]$")) {
             nameError = "Their name should be 2-50 characters and can include letters, spaces, dots, hyphens, or apostrophes. Let's keep it simple and heartfelt!";
         }
 
@@ -122,7 +122,7 @@ public class LovedOneController {
         // Validate relationship
         if (relationship.isEmpty()) {
             relationshipError = "We’d love to know your relationship with them. Could you fill this in?";
-        } else if (!relationship.matches("^[a-zA-Z\\s.,!?'-]{1,50}$")) {
+        } else if (!relationship.matches("^[a-zA-Z][a-zA-Z\\s.,!?'-]{0,48}[a-zA-Z]$")) {
             relationshipError = "Describe your connection in 1-50 characters using letters, spaces, and common punctuation. Let's keep it meaningful and clear!";
         }
 

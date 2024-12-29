@@ -16,7 +16,7 @@ public class ProfileUpdateDTO {
 
     @NotEmpty(message = "We’d love to know your name! Could you fill this in?")
     @Pattern(regexp = "^[a-zA-Z][a-zA-Z .'-]{1,48}[a-zA-Z]$", 
-    message = "Your name can be 3-50 characters and may include letters, spaces, dots (.), hyphens (-), or apostrophes ('). Let’s keep it simple—no numbers or other symbols.")
+    message = "Your name can be 3-50 characters and may include letters, spaces, hyphens (-), or apostrophes ('). Let’s keep it simple—no numbers or other symbols.")
     private String name;
 
     @Min(1)
