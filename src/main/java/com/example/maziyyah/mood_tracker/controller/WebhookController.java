@@ -2,6 +2,8 @@ package com.example.maziyyah.mood_tracker.controller;
 
 import java.io.StringReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,17 +14,20 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 
 import com.example.maziyyah.mood_tracker.model.Update;
+import com.example.maziyyah.mood_tracker.service.TelegramNotificationService;
 import com.example.maziyyah.mood_tracker.service.WebhookService;
 
 @RestController
 public class WebhookController {
 
     private final WebhookService webhookService;
+    private final TelegramNotificationService telegramNotificationService;
+    private static final Logger logger = LoggerFactory.getLogger(WebhookController.class);
 
-    // need to add method to programmatically set webhook
 
-    public WebhookController(WebhookService webhookService) {
+    public WebhookController(WebhookService webhookService, TelegramNotificationService telegramNotificationService) {
         this.webhookService = webhookService;
+        this.telegramNotificationService = telegramNotificationService;
     }
 
     @PostMapping("/webhook")
@@ -48,6 +53,8 @@ public class WebhookController {
             // Extract message text and chat ID
             String messageText = update.getMessage_text();
             long chatId = update.getChat_id();
+
+            logger.info("Processing /start command. Message text: {}", messageText);
             System.out.println("Received message: " + messageText);
 
             if (messageText.startsWith("/start")) {
@@ -59,12 +66,28 @@ public class WebhookController {
                     if (token.length() == 6) { // 6-character tokens are "user" invites
                         if (webhookService.handleUserLinking(token, update)) {
                             System.out.println("Successfully linked Telegram userId and user account id.");
+                            String successMessage = "Woohoo! Your account is linked and ready! 🎉\n"
+                                    + "Sit back and relax—thoughtful reminders and uplifting encouragement will now come straight to your chat. 😊";
+                            String chatIdString = String.valueOf(chatId);
+                            try {
+                                telegramNotificationService.sendTelegramNotification(chatIdString, successMessage);
+                            } catch (Exception e) {
+                                logger.error("Failed to send notification to chat ID {}: {}", chatId, e.getMessage(), e);
+                            }
                             return ResponseEntity.ok("Successfully linked Telegram userId and user account id.");
 
                         }
                     } else if (token.length() == 8) { // 8-character tokens are "lovedone" invites
                         if (webhookService.handleLovedOneLinking(token, chatId)) {
                             System.out.println("Linked loved one successfully!");
+                            String successMessage = "You’re now officially a loved one! ❤️\n"
+                                    + "Thank you for being there to support someone who cares about you. You’re making a big difference already. 🌟";
+                            String chatIdString = String.valueOf(chatId);
+                            try {
+                                telegramNotificationService.sendTelegramNotification(chatIdString, successMessage);
+                            } catch (Exception e) {
+                                logger.error("Failed to send notification to chat ID {}: {}", chatId, e.getMessage(), e);
+                            }
                             return ResponseEntity.ok("Linked loved one successfully!");
                         }
 
