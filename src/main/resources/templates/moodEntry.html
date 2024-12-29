@@ -15,7 +15,8 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(to bottom, hsl(171, 37%, 96%), hsl(0, 0%, 100%)); /* Soft gradient background */
+            background: linear-gradient(to bottom, hsl(171, 37%, 96%), hsl(0, 0%, 100%));
+            /* Soft gradient background */
             font-family: 'Poppins', sans-serif;
             color: #333333;
         }
@@ -52,7 +53,8 @@
         }
 
         .mood-button:hover {
-            transform: scale(1.2); /* Scale up on hover */
+            transform: scale(1.2);
+            /* Scale up on hover */
         }
 
         .textarea {
@@ -64,6 +66,7 @@
             resize: none;
             margin-bottom: 1rem;
             height: 100px;
+            /* color: hsl(180, 100%, 25%); */
         }
 
         .tag-section {
@@ -156,6 +159,19 @@
         .btn-primary:hover {
             background-color: hsl(180, 100%, 17%);
             transform: translateY(-2px);
+        }
+
+        .tag-checkbox,
+        .tag-chip {
+            font-size: 0.9rem;
+            background-color: hsl(176, 55%, 94%);
+            color: hsl(180, 50%, 40%);
+        }
+
+        .tag-checkbox.active,
+        .tag-chip.active {
+            background-color: hsl(180, 100%, 25%);
+            color: hsl(0, 0%, 100%);
         }
     </style>
 </head>
@@ -265,7 +281,7 @@
                 updateTagsInput(); // update hidden input?
             });
         });
-      
+
         // Handle custom tag addition
         customTagInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && customTagInput.value.trim() !== '') {
