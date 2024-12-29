@@ -227,21 +227,25 @@ public class MoodController {
         String noteError = null;
         String tagStringError = null;
 
+        //trim inputs
+        note = note.trim();
+        tagsString = tagsString.trim();
+
         if (moodScore == null) {
-            moodError = "Please select a mood.";
+            moodError = "Don't forget to pick a mood that matches how you're feeling.";
         } 
 
         // Validate note
         if (note == null || note.trim().isEmpty()) {
-            noteError = "A note is required. Please describe your mood.";
+            noteError = "Your note is missing! Let us know how you're feeling.";
         }
-        if (!note.matches("^[\\w\\s.,!?'-]{1,255}$")) {
-            noteError = "Invalid note. Only alphanumeric characters and common punctuation are allowed, and it must be between 1 and 255 characters.";
+        if (!note.matches("^[\\w\\s.,!?()\\[\\]{}'\"@#$%^&*+=|\\\\:;~`/-]{1,255}$")) {
+            noteError = "Oops! Your note can include letters, numbers, common punctuation, special characters, and brackets, but it needs to stay between 1 and 255 characters.";
         }
 
         // Validate tags
         if (!tagsString.isEmpty() && !tagsString.matches("^[a-zA-Z0-9,\\s]*$")) {
-            tagStringError = "Invalid tags. Only alphanumeric characters and commas are allowed.";
+            tagStringError = "Hmm, your tags should only use letters, numbers, and commas. Try again!";
         }
 
         if (moodError != null || noteError != null || tagStringError != null) {
