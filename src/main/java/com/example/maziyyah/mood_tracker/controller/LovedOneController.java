@@ -122,8 +122,8 @@ public class LovedOneController {
         // Validate relationship
         if (relationship.isEmpty()) {
             relationshipError = "We’d love to know your relationship with them. Could you fill this in?";
-        } else if (!relationship.matches("^[\\w\\s.,!?'-]{1,50}$")) {
-            relationshipError = "Describe your connection in 1-50 characters using letters, numbers, and common punctuation. Let's keep it meaningful and clear!";
+        } else if (!relationship.matches("^[a-zA-Z\\s.,!?'-]{1,50}$")) {
+            relationshipError = "Describe your connection in 1-50 characters using letters, spaces, and common punctuation. Let's keep it meaningful and clear!";
         }
 
         if (nameError != null || contactError != null || relationshipError != null) {
