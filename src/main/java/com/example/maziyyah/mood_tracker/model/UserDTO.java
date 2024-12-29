@@ -4,13 +4,16 @@ import com.example.maziyyah.mood_tracker.validation.NotEmptyAndSize;
 
 import jakarta.validation.constraints.NotEmpty;
 // import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 public class UserDTO {
 
     @NotEmptyAndSize(notEmptyMessage = "Please enter a username to continue.", sizeMessage = "Your username needs at least 5 characters. Let’s make it memorable!", min = 5)
+    @Pattern(regexp = "^|[a-zA-Z0-9._-]{5,50}$", message = "Your username should be 5-50 characters and can include letters, numbers, dots, underscores, or hyphens.")
     private String username;
 
     @NotEmptyAndSize(notEmptyMessage = "We’d love to know your name. Could you fill it in?", sizeMessage = "Your name needs at least 3 characters. Something short and sweet works!", min = 3)
+    @Pattern(regexp = "^|[a-zA-Z .'-]{3,50}$", message = "Your name should be 3-50 characters and can include letters, spaces, dots, hyphens, or apostrophes.")
     private String name;
 
     // @NotEmpty(message = "A password is required to keep your account secure.")
