@@ -36,6 +36,12 @@ public class WebhookController {
         // parse the incoming JSON string
         try (JsonReader jsonReader = Json.createReader(new StringReader(requestBody))) {
             JsonObject jsonObject = jsonReader.readObject();
+            // System.out.println("JsonObject:" + jsonObject);
+
+            // Long updateIdIssue = webhookService.processUpdateId(jsonObject);
+            // if (updateIdIssue == 83178314) {
+            //     return ResponseEntity.ok("ok");
+            // }
             Update update = webhookService.toUpdate(jsonObject);
             Integer updateId = jsonObject.getInt("update_id");
             System.out.println(updateId);

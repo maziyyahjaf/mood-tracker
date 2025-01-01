@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.maziyyah.mood_tracker.model.Update;
 import com.example.maziyyah.mood_tracker.repository.WebhookRepository;
 
+
 import jakarta.json.JsonObject;
 
 @Service
@@ -39,14 +40,35 @@ public class WebhookService {
 
     }
 
+    public Long processUpdateId(JsonObject jsonObject) {
+        if (jsonObject == null || !jsonObject.containsKey("update_id")) {
+            throw new IllegalArgumentException("Invalid JSON: Missing 'update_id'");
+        }
+    
+        // Extract the update_id
+        return jsonObject.getJsonNumber("update_id").longValue();
+    }
+
     public Update toUpdate(JsonObject jsonObject) {
-        
+        if (jsonObject == null || !jsonObject.containsKey("message")) {
+            throw new IllegalArgumentException("Invalid JSON: Missing 'message' object");
+        }
         JsonObject message = jsonObject.getJsonObject("message");
-        String message_text = message.getString("text");
+
+        // Extract message text
+        String message_text = message.containsKey("text") ? message.getString("text") : null;
+
+        // Extract sender's details
         JsonObject from = message.getJsonObject("from");
-        Long from_id = from.getJsonNumber("id").longValue();
+        Long from_id = from != null && from.containsKey("id") ? from.getJsonNumber("id").longValue() : null;
+
+        // Extract chat details
         JsonObject chat = message.getJsonObject("chat");
-        Long chat_id = chat.getJsonNumber("id").longValue();
+        Long chat_id = chat != null && chat.containsKey("id") ? chat.getJsonNumber("id").longValue() : null;
+
+        if (chat_id == null || from_id == null || message_text == null) {
+            throw new IllegalArgumentException("Invalid JSON: Missing required fields");
+        }
 
         Update update = new Update(chat_id, from_id, message_text);
 
@@ -66,13 +88,13 @@ public class WebhookService {
     }
 
     public Boolean handleLovedOneLinking(String inviteToken, long chatId) {
-        Optional<Map<Object,Object>> inviteData = checkIfInviteTokenExists(inviteToken);
+        Optional<Map<Object, Object>> inviteData = checkIfInviteTokenExists(inviteToken);
         if (inviteData.isPresent()) {
             String lovedOneId = Optional.ofNullable(inviteData.get().get("lovedOneId"))
-                                        .map(Object::toString)
-                                        .orElseThrow(() -> new IllegalArgumentException("invite data does not exist"));
+                    .map(Object::toString)
+                    .orElseThrow(() -> new IllegalArgumentException("invite data does not exist"));
             String chatIdString = String.valueOf(chatId);
-            webhookRepository.linkLovedOneIdToChatId(lovedOneId,chatIdString);
+            webhookRepository.linkLovedOneIdToChatId(lovedOneId, chatIdString);
             webhookRepository.deleteInviteToken(inviteToken);
             return true;
         }
@@ -80,8 +102,8 @@ public class WebhookService {
         return false;
     }
 
-    public Optional<Map<Object,Object>> checkIfInviteTokenExists(String inviteToken) {
-        Map<Object,Object> retrievedInviteData = webhookRepository.checkIfInviteTokenExists(inviteToken);
+    public Optional<Map<Object, Object>> checkIfInviteTokenExists(String inviteToken) {
+        Map<Object, Object> retrievedInviteData = webhookRepository.checkIfInviteTokenExists(inviteToken);
 
         if (retrievedInviteData == null) {
             return Optional.empty();
@@ -92,7 +114,7 @@ public class WebhookService {
 
     public Boolean handleUserLinking(String linkingCode, Update update) {
         Optional<String> userId = checkIfLinkingCodeExists(linkingCode);
-        
+
         if (userId.isEmpty()) {
             System.out.println("invalid linking code");
             return false;
@@ -103,7 +125,7 @@ public class WebhookService {
         linkTelegramUserIdToAppUserId(update, userIdValue);
         linkUserIdToChatId(userIdValue, update);
         System.out.println(
-            "Successfully linked Telegram userId " + update.getFrom_id() + " with userId " + userIdValue);
+                "Successfully linked Telegram userId " + update.getFrom_id() + " with userId " + userIdValue);
 
         return true;
     }
@@ -113,15 +135,9 @@ public class WebhookService {
         webhookRepository.linkTelegramUserIdToAppUserId(from_id, userId);
     }
 
-    public void linkUserIdToChatId(String userId,Update update) {
+    public void linkUserIdToChatId(String userId, Update update) {
         String chat_id = String.valueOf(update.getChat_id());
         webhookRepository.linkUserIdToChatId(userId, chat_id);
     }
 
-
- 
-    
-    
-    
-    
 }
